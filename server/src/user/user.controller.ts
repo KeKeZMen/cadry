@@ -18,7 +18,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get(':email')
-  async finOneByIdOrEmail(@Param('email') email: string) {
+  async findByEmail(@Param('email') email: string) {
     return await this.userService.findUsersByEmail(email);
   }
 
@@ -34,10 +34,6 @@ export class UserController {
 
     if (currentUser.role !== 'Admin' && updateUserDto.role) {
       throw new UnauthorizedException();
-    }
-
-    if (updateUserDto.password !== updateUserDto.repeatPassword) {
-      throw new BadRequestException('Пароли не совпадают');
     }
 
     return await this.userService.update(id, updateUserDto);
