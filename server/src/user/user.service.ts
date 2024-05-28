@@ -46,10 +46,6 @@ export class UserService {
     });
   }
 
-  findMany() {
-    return this.prisma.user.findMany();
-  }
-
   update(id: string, updateUserDto: UpdateUserDto) {
     const hashedPassword = this.hashPassword(updateUserDto.password);
 
