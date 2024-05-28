@@ -146,6 +146,7 @@ enum Role {
   Manager
   Employment
   Graduates
+  Student
 }
 
 enum Gender {
