@@ -79,19 +79,21 @@ model Request {
 }
 
 model Organization {
-  id                           String           @id @default(uuid())
-  name                         String
-  phoneNumber                  String           @map("phone_number")
-  email                        String           @unique
-  web                          String
-  address                      String
-  inn                          String           @unique @db.VarChar(12)
-  description                  String?
-  logoUrl                      String?          @map("logo_url")
-  type                         OrganizationType
-  educationOrganizationRequest Request[]        @relation("education")
-  workOrganizationRequests     Request[]        @relation("work")
+  id          String           @id @default(uuid())
+  name        String
+  phoneNumber String           @map("phone_number")
+  email       String           @unique
+  web         String
+  address     String
+  inn         String           @unique @db.VarChar(12)
+  description String?
+  logoUrl     String?          @map("logo_url")
+  type        OrganizationType
+
+  educationOrganizationRequest Request[] @relation("education")
+  workOrganizationRequests     Request[] @relation("work")
   students                     Student[]
+  branches                     Branch[]
 
   @@index([id])
   @@map("organizations")
@@ -103,7 +105,9 @@ model Branch {
   address        String
   phoneNumber    String @map("phone_number")
   email          String
-  users          User[]
+
+  users        User[]
+  organization Organization @relation(fields: [organizationId], references: [id])
 
   @@index([id])
   @@map("branches")
