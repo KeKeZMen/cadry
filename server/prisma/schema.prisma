@@ -79,35 +79,33 @@ model Request {
 }
 
 model Organization {
-  id          String           @id @default(uuid())
-  name        String
-  phoneNumber String           @map("phone_number")
-  email       String           @unique
-  web         String
-  address     String
-  inn         String           @unique @db.VarChar(12)
-  description String?
-  logoUrl     String?          @map("logo_url")
-  type        OrganizationType
-
-  educationOrganizationRequest Request[] @relation("education")
-  workOrganizationRequests     Request[] @relation("work")
-  students                     Student[]
+  id                           String           @id @default(uuid())
+  name                         String?
+  phoneNumber                  String?          @map("phone_number")
+  email                        String?          @unique
+  web                          String?
+  address                      String?
+  inn                          String           @unique @db.VarChar(12)
+  description                  String?
+  logoUrl                      String?          @map("logo_url")
+  type                         OrganizationType
   branches                     Branch[]
+  educationOrganizationRequest Request[]        @relation("education")
+  workOrganizationRequests     Request[]        @relation("work")
+  students                     Student[]
 
   @@index([id])
   @@map("organizations")
 }
 
 model Branch {
-  id             String @id @default(uuid())
-  organizationId String @map("organization_id")
+  id             String       @id @default(uuid())
+  organizationId String       @map("organization_id")
   address        String
-  phoneNumber    String @map("phone_number")
+  phoneNumber    String       @map("phone_number")
   email          String
-
-  users        User[]
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  users          User[]
 
   @@index([id])
   @@map("branches")
