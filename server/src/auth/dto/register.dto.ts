@@ -1,17 +1,25 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsPasswordMatchingConstraint } from '@shared/decorators/isPasswordMatching';
+import {
+  IsEmail,
+  IsString,
+  MaxLength,
+  MinLength,
+  Validate,
+} from 'class-validator';
 
 export class RegisterDto {
   @IsString()
   INN: string;
 
-  @IsEmail()
+  @IsEmail({}, { message: 'Неверный формат почты' })
   email: string;
 
   @IsString()
-  @MinLength(6)
+  @MinLength(6, { message: 'Минимальная длина пароля 6 символов' })
+  @MaxLength(12, { message: 'Максимальная длина пароля 12 символов' })
   password: string;
 
   @IsString()
-  @MinLength(6)
+  @Validate(IsPasswordMatchingConstraint)
   repeatPassword: string;
 }
