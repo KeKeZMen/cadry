@@ -30,11 +30,6 @@ export class UserController {
     return await this.userService.findOneByIdOrEmail(idOrEmail);
   }
 
-  @Get()
-  async findAll() {
-    return await this.userService.findMany();
-  }
-
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
