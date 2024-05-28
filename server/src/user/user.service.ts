@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
 import { genSaltSync, hashSync } from 'bcrypt';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { CreateUserDto, OrganizationUserDto, UpdateUserDto } from './dto';
 
 @Injectable()
 export class UserService {
@@ -14,6 +14,23 @@ export class UserService {
       data: {
         ...createUserDto,
         password: hashedPassword,
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+      },
+    });
+  }
+
+  createForOrganization(organizationUser: OrganizationUserDto) {
+    const hashedPassword = this.hashPassword(organizationUser.password);
+
+    return this.prisma.user.create({
+      data: {
+        email: organizationUser.email,
+        password: hashedPassword,
+        role: 'Manager',
       },
       select: {
         id: true,
