@@ -17,12 +17,7 @@ export class UserService {
       },
       select: {
         id: true,
-        firstName: true,
-        secondName: true,
-        lastName: true,
         email: true,
-        phoneNumber: true,
-        branchId: true,
         role: true,
       },
     });
@@ -46,6 +41,23 @@ export class UserService {
     });
   }
 
+  findUsersByEmail(email: string) {
+    return this.prisma.user.findMany({
+      where: {
+        email: {
+          contains: email,
+        },
+      },
+      select: {
+        id: true,
+        firstName: true,
+        secondName: true,
+        lastName: true,
+        email: true,
+      },
+    });
+  }
+
   update(id: string, updateUserDto: UpdateUserDto) {
     const hashedPassword = this.hashPassword(updateUserDto.password);
 
@@ -62,10 +74,6 @@ export class UserService {
         firstName: true,
         secondName: true,
         lastName: true,
-        email: true,
-        phoneNumber: true,
-        branchId: true,
-        role: true,
       },
     });
   }

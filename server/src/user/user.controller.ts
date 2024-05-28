@@ -7,34 +7,35 @@ import {
   Param,
   ParseUUIDPipe,
   Patch,
-  Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { UpdateUserDto } from './dto';
+import { CurrentUser } from '@shared/decorators';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    if (createUserDto.password !== createUserDto.repeatPassword) {
-      throw new BadRequestException('Пароли не совпадают');
-    }
-
-    return await this.userService.create(createUserDto);
-  }
-
-  @Get(':idOrEmail')
-  async finOneByIdOrEmail(@Param('idOrEmail') idOrEmail: string) {
-    return await this.userService.findOneByIdOrEmail(idOrEmail);
+  @Get(':email')
+  async finOneByIdOrEmail(@Param('email') email: string) {
+    return await this.userService.findUsersByEmail(email);
   }
 
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser() currentUser: IJwtPayload,
   ) {
+    if (currentUser.role !== 'Admin' && currentUser.id !== id) {
+      throw new UnauthorizedException();
+    }
+
+    if (currentUser.role !== 'Admin' && updateUserDto.role) {
+      throw new UnauthorizedException();
+    }
+
     if (updateUserDto.password !== updateUserDto.repeatPassword) {
       throw new BadRequestException('Пароли не совпадают');
     }
@@ -43,7 +44,14 @@ export class UserController {
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseUUIDPipe) id: string) {
+  async delete(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() currentUser: IJwtPayload,
+  ) {
+    if (currentUser.role !== 'Admin' && currentUser.id !== id) {
+      throw new UnauthorizedException();
+    }
+
     return await this.userService.delete(id);
   }
 }
