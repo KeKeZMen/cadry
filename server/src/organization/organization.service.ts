@@ -14,10 +14,11 @@ export class OrganizationService {
     });
   }
 
-  createViaInn(inn: string) {
+  createViaInn(inn: string, email: string) {
     return this.prisma.organization.create({
       data: {
         inn,
+        email,
         type: 'Organization',
       },
     });

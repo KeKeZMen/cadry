@@ -23,6 +23,7 @@ export class AuthService {
 
     const organization = await this.organizationService.createViaInn(
       registerDto.INN,
+      registerDto.email,
     );
 
     const branch = await this.branchService.createForOrganization({
