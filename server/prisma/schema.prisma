@@ -87,7 +87,7 @@ model Organization {
   address                      String
   inn                          String           @unique @db.VarChar(12)
   description                  String?
-  logoUrl                      String?           @map("logo_url")
+  logoUrl                      String?          @map("logo_url")
   type                         OrganizationType
   educationOrganizationRequest Request[]        @relation("education")
   workOrganizationRequests     Request[]        @relation("work")
@@ -98,12 +98,12 @@ model Organization {
 }
 
 model Branch {
-  id            String @id @default(uuid())
-  oranizationId String @map("organization_id")
-  address       String
-  phoneNumber   String @map("phone_number")
-  email         String
-  users         User[]
+  id             String @id @default(uuid())
+  organizationId String @map("organization_id")
+  address        String
+  phoneNumber    String @map("phone_number")
+  email          String
+  users          User[]
 
   @@index([id])
   @@map("branches")
