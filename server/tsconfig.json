@@ -24,8 +24,12 @@
       "@user/*": ["src/user/*"],
       "@auth": ["src/auth"],
       "@auth/*": ["src/auth/*"],
+      "@branch": ["src/branch"],
+      "@branch/*": ["src/branch/*"],
+      "@organization": ["src/organization"],
+      "@organization/*": ["src/organization/*"],
       "@shared": ["libs/shared/src"],
-      "@shared/*": ["libs/shared/src/*"],
+      "@shared/*": ["libs/shared/src/*"]
     }
   }
 }
