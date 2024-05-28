@@ -101,8 +101,8 @@ model Organization {
 model Branch {
   id             String       @id @default(uuid())
   organizationId String       @map("organization_id")
-  address        String
-  phoneNumber    String       @map("phone_number")
+  address        String?
+  phoneNumber    String?      @map("phone_number")
   email          String
   organization   Organization @relation(fields: [organizationId], references: [id])
   users          User[]
