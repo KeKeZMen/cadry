@@ -15,7 +15,6 @@ model User {
     phoneNumber String  @map("phone_number")
     email       String  @unique
     password    String
-    studentId   String? @map("student_id")
     branchId    String? @map("branch_id")
     role        Role
 
@@ -27,14 +26,13 @@ model User {
 }
 
 model Student {
-    id                      String             @id @default(uuid())
     userId                  String             @unique @map("user_id")
     birthDate               DateTime           @map("birth_date")
     photoUrl                String?            @map("photo_url")
     graduateYear            Int                @map("graduate_year")
-    address                 String?
+    address                 String
     portfolioUrl            String?            @map("portfolio_url")
-    readyToMove             Boolean            @map("ready_to_move")
+    readyToMove             Boolean?            @map("ready_to_move")
     subInfo                 String?            @map("sub_info") @db.Text
     educationOrganizationId String             @map("education_organization_id")
     favoritesOrganizations  String[]           @map("favorites_organizations")
@@ -44,7 +42,7 @@ model Student {
     educationOrganization Organization @relation(fields: [educationOrganizationId], references: [id])
     user                  User         @relation(fields: [userId], references: [id])
 
-    @@index([id])
+    @@index([userId])
     @@map("students")
 }
 
