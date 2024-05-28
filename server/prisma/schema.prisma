@@ -1,0 +1,169 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id          String  @id @default(uuid())
+    firstName   String  @map("first_name")
+    secondName  String  @map("second_name")
+    lastName    String  @map("last_name")
+    phoneNumber String  @map("phone_number")
+    email       String  @unique
+    password    String
+    studentId   String? @map("student_id")
+    branchId    String? @map("branch_id")
+    role        Role
+
+    branch  Branch?  @relation(fields: [branchId], references: [id])
+    student Student?
+
+    @@index([id])
+    @@map("users")
+}
+
+model Student {
+    id                      String             @id @default(uuid())
+    userId                  String             @unique @map("user_id")
+    birthDate               DateTime           @map("birth_date")
+    photoUrl                String?            @map("photo_url")
+    graduateYear            Int                @map("graduate_year")
+    address                 String?
+    portfolioUrl            String?            @map("portfolio_url")
+    readyToMove             Boolean            @map("ready_to_move")
+    subInfo                 String?            @map("sub_info") @db.Text
+    educationOrganizationId String             @map("education_organization_id")
+    favoritesOrganizations  String[]           @map("favorites_organizations")
+    disability              DisabilitiesTypes?
+    gender                  Gender
+
+    educationOrganization Organization @relation(fields: [educationOrganizationId], references: [id])
+    user                  User         @relation(fields: [userId], references: [id])
+
+    @@index([id])
+    @@map("students")
+}
+
+enum DisabilitiesTypes {
+    visuallyImpaired
+    hardHearing
+    speechDisorders
+    musculoskeletalDisorders
+    impairedMental
+    intellectualImpairment
+    autismDisorder
+}
+
+model Request {
+    id                      Int       @id @default(autoincrement())
+    educationOrganizationId String?   @map("education_organization_id")
+    workOrganizationId      String    @map("work_organization_id")
+    specialityId            Int?      @map("speciality_id")
+    professionId            Int?      @map("profession_id")
+    count                   Int
+    requestYear             DateTime? @map("request_year")
+    salary                  Int
+    readyToMove             Boolean   @default(false) @map("ready_to_move")
+    targetAgreement         Boolean   @default(false) @map("target_agreement")
+    isDisability            Boolean   @default(false) @map("is_disability")
+    quotas                  Boolean   @default(false)
+    description             String    @db.Text
+
+    educationOrganization Organization? @relation(fields: [educationOrganizationId], references: [id], name: "education")
+    workOrganization      Organization  @relation(fields: [workOrganizationId], references: [id], name: "work")
+    profession            Profession?   @relation(fields: [professionId], references: [id])
+    speciality            Speciality?   @relation(fields: [specialityId], references: [id])
+
+    @@index([id])
+    @@map("requests")
+}
+
+enum Role {
+    Admin
+    Manager
+    Employment
+    Graduates
+}
+
+enum Gender {
+    Man
+    Women
+}
+
+model Organization {
+    id          String           @id @default(uuid())
+    name        String
+    phoneNumber String           @map("phone_number")
+    email       String           @unique
+    web         String
+    address     String
+    inn         String           @unique @db.VarChar(12)
+    description String?          @db.Text
+    logoUrl     String           @map("logo_url")
+    type        OrganizationType
+
+    workOrganizationRequests     Request[] @relation("work")
+    educationOrganizationRequest Request[] @relation("education")
+    students                     Student[]
+
+    @@index([id])
+    @@map("organizations")
+}
+
+enum OrganizationType {
+    EducationOrganization
+    Organization
+}
+
+model Branch {
+    id            String @id @default(uuid())
+    oranizationId String @map("organization_id")
+    address       String
+    phoneNumber   String @map("phone_number")
+    email         String
+
+    users User[]
+
+    @@index([id])
+    @@map("branches")
+}
+
+model Direction {
+    id  Int    @id @default(autoincrement())
+    key String
+
+    specialities Speciality[]
+
+    @@index([id])
+    @@map("directions")
+}
+
+model Speciality {
+    id          Int    @id @default(autoincrement())
+    key         String
+    directionId Int    @map("direction_id")
+
+    direction   Direction    @relation(fields: [directionId], references: [id])
+    professions Profession[]
+    requests    Request[]
+
+    @@index([id])
+    @@map("specialities")
+}
+
+model Profession {
+    id           Int    @id @default(autoincrement())
+    key          String
+    name         String
+    specialityId Int    @map("speciality_id")
+
+    speciality Speciality @relation(fields: [specialityId], references: [id])
+    requests   Request[]
+
+    @@index([id])
+    @@map("professions")
+}
