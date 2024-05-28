@@ -18,10 +18,21 @@ model User {
   branchId    String?  @map("branch_id")
   role        Role
   student     Student?
+  tokens      Token[]
   branch      Branch?  @relation(fields: [branchId], references: [id])
 
   @@index([id])
   @@map("users")
+}
+
+model Token {
+  token     String   @unique
+  exp       DateTime
+  userId    String
+  userAgent String   @map("user_agent")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tokens")
 }
 
 model Student {
