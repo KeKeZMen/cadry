@@ -6,10 +6,11 @@ import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
 export class OrganizationService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createOrganizationDto: CreateOrganizationDto) {
+  createViaInn(inn: string) {
     return this.prisma.organization.create({
       data: {
-        ...createOrganizationDto,
+        inn,
+        type: 'Organization',
       },
     });
   }
