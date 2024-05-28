@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
-import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
+import { CreateOrganizationDto, CreateOrganizationViaInnDto, UpdateOrganizationDto } from './dto';
 
 @Injectable()
 export class OrganizationService {
@@ -14,7 +14,7 @@ export class OrganizationService {
     });
   }
 
-  createViaInn(inn: string, email: string) {
+  createViaInn(createViaInnDto: CreateOrganizationViaInnDto) {
     return this.prisma.organization.create({
       data: {
         inn,
