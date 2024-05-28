@@ -87,7 +87,7 @@ model Organization {
   address                      String
   inn                          String           @unique @db.VarChar(12)
   description                  String?
-  logoUrl                      String           @map("logo_url")
+  logoUrl                      String?           @map("logo_url")
   type                         OrganizationType
   educationOrganizationRequest Request[]        @relation("education")
   workOrganizationRequests     Request[]        @relation("work")
