@@ -21,5 +21,5 @@ export class RegisterDto {
 
   @IsString()
   @Validate(IsPasswordMatchingConstraint)
-  repeatPassword: string;
+  passwordRepeat: string;
 }
