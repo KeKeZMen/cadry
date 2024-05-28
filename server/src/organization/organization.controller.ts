@@ -13,7 +13,7 @@ import {
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
 import { BranchService } from '@branch/branch.service';
-import { CurrentUser, Roles } from '@shared/decorators';
+import { CurrentUser, Public, Roles } from '@shared/decorators';
 import { UserService } from '@user/user.service';
 
 @Controller('organization')
@@ -30,6 +30,7 @@ export class OrganizationController {
     return await this.organizationService.create(createOrganizationDto);
   }
 
+  @Public()
   @Get(':name')
   async findOneByName(@Param('name') name: string) {
     return await this.organizationService.findManyByName(name);

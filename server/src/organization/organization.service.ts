@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
-import { UpdateOrganizationDto } from './dto';
+import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
 
 @Injectable()
 export class OrganizationService {
   constructor(private readonly prisma: PrismaService) {}
+
+  create(createOrganizationDto: CreateOrganizationDto) {
+    return this.prisma.organization.create({
+      data: {
+        ...createOrganizationDto,
+      },
+    });
+  }
 
   createViaInn(inn: string) {
     return this.prisma.organization.create({
