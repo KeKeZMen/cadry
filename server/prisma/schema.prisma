@@ -9,10 +9,10 @@ datasource db {
 
 model User {
   id          String   @id @default(uuid())
-  firstName   String   @map("first_name")
-  secondName  String   @map("second_name")
-  lastName    String   @map("last_name")
-  phoneNumber String   @map("phone_number")
+  firstName   String?  @map("first_name")
+  secondName  String?  @map("second_name")
+  lastName    String?  @map("last_name")
+  phoneNumber String?  @map("phone_number")
   email       String   @unique
   password    String
   branchId    String?  @map("branch_id")
