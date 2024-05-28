@@ -22,6 +22,20 @@ export class OrganizationService {
     });
   }
 
+  findMany() {
+    return this.prisma.organization.findMany();
+  }
+
+  findManyByName(name: string) {
+    return this.prisma.organization.findMany({
+      where: {
+        name: {
+          contains: name,
+        },
+      },
+    });
+  }
+
   update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
     return this.prisma.organization.update({
       where: {

@@ -30,9 +30,9 @@ export class OrganizationController {
     return await this.organizationService.create(createOrganizationDto);
   }
 
-  @Get(':idOrEmail')
-  async findOne(@Param('idOrEmail') idOrEmail: string) {
-    return await this.organizationService.findOneByIdOrEmail(idOrEmail);
+  @Get(':name')
+  async findOneByName(@Param('name') name: string) {
+    return await this.organizationService.findManyByName(name);
   }
 
   @Patch(':id')
