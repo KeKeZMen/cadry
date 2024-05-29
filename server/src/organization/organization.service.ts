@@ -45,6 +45,9 @@ export class OrganizationService {
       data: {
         ...updateOrganizationDto,
       },
+      select: {
+        id: true,
+      },
     });
   }
 
