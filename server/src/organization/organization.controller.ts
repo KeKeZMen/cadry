@@ -8,12 +8,14 @@ import {
   ParseUUIDPipe,
   ConflictException,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
 import { BranchService } from '@branch/branch.service';
 import { CurrentUser, Roles } from '@shared/decorators';
 import { UserService } from '@user/user.service';
+import { RolesGuard } from '@auth/guards/roles.guards';
 
 @Controller('organization')
 export class OrganizationController {
@@ -29,6 +31,8 @@ export class OrganizationController {
     return await this.organizationService.create(createOrganizationDto);
   }
 
+  @Roles('Admin', 'Organization')
+  @UseGuards(RolesGuard)
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -37,10 +41,7 @@ export class OrganizationController {
   ) {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
-    if (
-      user.organization.id !== id ||
-      (user.role !== 'Organization' && user.role !== 'Admin')
-    ) {
+    if (user.organization.id !== id && user.role !== 'Admin') {
       throw new UnauthorizedException();
     }
 
@@ -48,6 +49,7 @@ export class OrganizationController {
   }
 
   @Roles('Admin')
+  @UseGuards(RolesGuard)
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     const branches = await this.branchService.findManyByOrganizationId(id);
