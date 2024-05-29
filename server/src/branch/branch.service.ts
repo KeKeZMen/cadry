@@ -5,10 +5,24 @@ import { DatabaseService } from '@database/database.service';
 @Injectable()
 export class BranchService {
   constructor(private readonly database: DatabaseService) {}
-  create(createBranchDto: CreateBranchDto) {
+
+  create(createBranchDto: CreateBranchDto, organizationId: string) {
     return this.database.branch.create({
       data: {
         ...createBranchDto,
+        organizationId,
+      },
+    });
+  }
+
+  getOrganizationIdByBranch(id: string) {
+    return this.database.organization.findFirst({
+      where: {
+        branches: {
+          some: {
+            id,
+          },
+        },
       },
     });
   }
@@ -29,6 +43,9 @@ export class BranchService {
       data: {
         ...updateBranchDto,
       },
+      select: {
+        id: true,
+      },
     });
   }
 
@@ -36,6 +53,9 @@ export class BranchService {
     return this.database.branch.delete({
       where: {
         id,
+      },
+      select: {
+        id: true,
       },
     });
   }
