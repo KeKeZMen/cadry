@@ -8,31 +8,31 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  firstName   String?  @map("first_name")
-  secondName  String?  @map("second_name")
-  lastName    String?  @map("last_name")
-  phoneNumber String?  @map("phone_number")
-  email       String   @unique
+  id          String  @id @default(uuid())
+  firstName   String? @map("first_name")
+  secondName  String? @map("second_name")
+  lastName    String? @map("last_name")
+  phoneNumber String? @map("phone_number")
+  email       String  @unique
   password    String
-  branchId    String?  @map("branch_id")
   role        Role
-  student     Student?
-  tokens      Token[]
-  branch      Branch?  @relation(fields: [branchId], references: [id])
+
+  student      Student?
+  employee     Employee?
+  organization Organization?
+  tokens       Token[]
 
   @@index([id])
   @@map("users")
 }
 
-model Token {
-  token     String   @unique
-  exp       DateTime
-  userId    String
-  userAgent String   @map("user_agent")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Employee {
+  userId       String       @unique @map("user_id")
+  employeeType EmployeeType @map("employee_type")
 
-  @@map("tokens")
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("employees")
 }
 
 model Student {
@@ -46,74 +46,93 @@ model Student {
   subInfo                 String?            @map("sub_info")
   educationOrganizationId String             @map("education_organization_id")
   favoritesOrganizations  String[]           @map("favorites_organizations")
-  disability              DisabilitiesTypes?
+  professionId            Int                @map("profession_id")
   gender                  Gender
-  educationOrganization   Organization       @relation(fields: [educationOrganizationId], references: [id])
-  user                    User               @relation(fields: [userId], references: [id])
+  disability              DisabilitiesTypes?
 
-  @@index([userId])
+  user                  User         @relation(fields: [userId], references: [id])
+  educationOrganization Organization @relation(fields: [educationOrganizationId], references: [id])
+  profession            Profession   @relation(fields: [professionId], references: [id])
+
   @@map("students")
 }
 
+model Token {
+  token     String   @unique
+  exp       DateTime
+  userId    String
+  userAgent String   @map("user_agent")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tokens")
+}
+
 model Request {
-  id                      Int           @id @default(autoincrement())
-  educationOrganizationId String?       @map("education_organization_id")
-  workOrganizationId      String        @map("work_organization_id")
-  specialityId            Int?          @map("speciality_id")
-  professionId            Int?          @map("profession_id")
+  id                      Int       @id @default(autoincrement())
+  educationOrganizationId String?   @map("education_organization_id")
+  workOrganizationId      String    @map("work_organization_id")
+  specialityId            Int?      @map("speciality_id")
+  professionId            Int?      @map("profession_id")
   count                   Int
-  requestYear             DateTime?     @map("request_year")
+  requestYear             DateTime? @map("request_year")
   salary                  Int
-  readyToMove             Boolean       @default(false) @map("ready_to_move")
-  targetAgreement         Boolean       @default(false) @map("target_agreement")
-  isDisability            Boolean       @default(false) @map("is_disability")
-  quotas                  Boolean       @default(false)
+  readyToMove             Boolean   @default(false) @map("ready_to_move")
+  targetAgreement         Boolean   @default(false) @map("target_agreement")
+  isDisability            Boolean   @default(false) @map("is_disability")
+  quotas                  Boolean   @default(false)
   description             String
-  educationOrganization   Organization? @relation("education", fields: [educationOrganizationId], references: [id])
-  profession              Profession?   @relation(fields: [professionId], references: [id])
-  speciality              Speciality?   @relation(fields: [specialityId], references: [id])
-  workOrganization        Organization  @relation("work", fields: [workOrganizationId], references: [id])
+
+  educationOrganization Organization? @relation("education", fields: [educationOrganizationId], references: [id])
+  profession            Profession?   @relation(fields: [professionId], references: [id])
+  speciality            Speciality?   @relation(fields: [specialityId], references: [id])
+  workOrganization      Organization  @relation("work", fields: [workOrganizationId], references: [id])
 
   @@index([id])
   @@map("requests")
 }
 
 model Organization {
-  id                           String           @id @default(uuid())
-  name                         String?
-  phoneNumber                  String?          @map("phone_number")
-  email                        String           @unique
-  web                          String?
-  address                      String?
-  inn                          String           @unique @db.VarChar(12)
-  description                  String?
-  logoUrl                      String?          @map("logo_url")
-  type                         OrganizationType
-  branches                     Branch[]
-  educationOrganizationRequest Request[]        @relation("education")
-  workOrganizationRequests     Request[]        @relation("work")
+  id          String           @id @default(uuid())
+  userId      String           @unique @map("user_id")
+  name        String?
+  phoneNumber String?          @map("phone_number")
+  email       String           @unique
+  web         String?
+  address     String?
+  inn         String           @unique @db.VarChar(12)
+  description String?
+  logoUrl     String?          @map("logo_url")
+  type        OrganizationType
+
+  user                         User      @relation(fields: [userId], references: [id])
+  educationOrganizationRequest Request[] @relation("education")
+  workOrganizationRequests     Request[] @relation("work")
   students                     Student[]
+  branches                     Branch[]
 
   @@index([id])
   @@map("organizations")
 }
 
 model Branch {
-  id             String       @id @default(uuid())
-  organizationId String       @map("organization_id")
+  id             String  @id @default(uuid())
+  organizationId String  @map("organization_id")
+  inn            String? @unique @db.Char(12)
   address        String?
-  phoneNumber    String?      @map("phone_number")
-  email          String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  users          User[]
+  phoneNumber    String? @map("phone_number")
+  email          String  @unique
+
+  organization Organization @relation(fields: [organizationId], references: [id])
 
   @@index([id])
   @@map("branches")
 }
 
 model Direction {
-  id           Int          @id @default(autoincrement())
-  key          String
+  id  Int    @id @default(autoincrement())
+  key String
+
   specialities Speciality[]
 
   @@index([id])
@@ -121,24 +140,27 @@ model Direction {
 }
 
 model Speciality {
-  id          Int          @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   key         String
-  directionId Int          @map("direction_id")
+  directionId Int    @map("direction_id")
+
+  direction   Direction    @relation(fields: [directionId], references: [id])
   professions Profession[]
   requests    Request[]
-  direction   Direction    @relation(fields: [directionId], references: [id])
 
   @@index([id])
   @@map("specialities")
 }
 
 model Profession {
-  id           Int        @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   key          String
   name         String
-  specialityId Int        @map("speciality_id")
-  speciality   Speciality @relation(fields: [specialityId], references: [id])
-  requests     Request[]
+  specialityId Int    @map("speciality_id")
+
+  speciality Speciality @relation(fields: [specialityId], references: [id])
+  requests   Request[]
+  students   Student[]
 
   @@index([id])
   @@map("professions")
@@ -156,10 +178,15 @@ enum DisabilitiesTypes {
 
 enum Role {
   Admin
+  Student
+  Employee
+  Organization
+}
+
+enum EmployeeType {
   Manager
   Employment
   Graduates
-  Student
 }
 
 enum Gender {
