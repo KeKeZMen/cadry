@@ -23,12 +23,20 @@ export class AuthService {
   ) {}
 
   async registerOrganization(registerDto: RegisterDto) {
-    const candidate = await this.userService.findOneByIdOrEmail(
+    const emailCandidate = await this.userService.findOneByIdOrEmail(
       registerDto.email,
     );
 
-    if (candidate) {
-      throw new ConflictException('Пользователь с таким email уже существует');
+    if (emailCandidate) {
+      throw new ConflictException('Организация с таким email уже существует');
+    }
+
+    const innCandidate = await this.organizationService.findOneByIdOrInn(
+      registerDto.inn,
+    );
+
+    if (innCandidate) {
+      throw new ConflictException('Организация с таким ИНН уже существует');
     }
 
     const user = await this.userService.create({
