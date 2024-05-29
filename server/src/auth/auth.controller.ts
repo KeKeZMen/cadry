@@ -1,12 +1,14 @@
 import {
   BadRequestException,
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpStatus,
   Post,
   Res,
   UnauthorizedException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Cookie, Public, UserAgent } from '@shared/decorators';
@@ -22,6 +24,7 @@ const REFRESH_TOKEN = 'refreshToken';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('register-organization')
   async registerOrganization(@Body() registerDto: RegisterDto) {
     return await this.authService.registerOrganization(registerDto);
@@ -40,6 +43,8 @@ export class AuthController {
     }
 
     this.setRefreshTokenToCookies(tokens, res);
+
+    res.json({ accessToken: tokens.accessToken });
   }
 
   @Get('refresh')
@@ -47,7 +52,7 @@ export class AuthController {
     @Cookie(REFRESH_TOKEN) refreshToken: string,
     @Res() res: Response,
     @UserAgent() userAgent: string,
-  ) {
+  ) {    
     if (!refreshToken) {
       throw new UnauthorizedException();
     }
@@ -62,6 +67,8 @@ export class AuthController {
     }
 
     this.setRefreshTokenToCookies(tokens, res);
+
+    res.json({ accessToken: tokens.accessToken })
   }
 
   @Get('logout')
