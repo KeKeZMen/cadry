@@ -32,7 +32,7 @@ model Employee {
   branchId     String       @map("branch_id")
 
   branch Branch @relation(fields: [branchId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("employees")
 }
@@ -52,7 +52,7 @@ model Student {
   gender                  Gender
   disability              DisabilitiesTypes?
 
-  user                  User         @relation(fields: [userId], references: [id])
+  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   educationOrganization Organization @relation(fields: [educationOrganizationId], references: [id])
   profession            Profession   @relation(fields: [professionId], references: [id])
 
