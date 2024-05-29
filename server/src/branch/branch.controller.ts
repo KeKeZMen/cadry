@@ -12,7 +12,7 @@ import {
 import { BranchService } from './branch.service';
 import { CreateBranchDto } from './dto/create-branch.dto';
 import { UpdateBranchDto } from './dto/update-branch.dto';
-import { CurrentUser } from '@shared/decorators';
+import { CurrentUser, Public } from '@shared/decorators';
 import { UserService } from '@user/user.service';
 
 @Controller('branch')
@@ -42,6 +42,7 @@ export class BranchController {
     return this.branchService.create(createBranchDto);
   }
 
+  @Public()
   @Get(':organizationId')
   async findManyByOrganizationId(
     @Param('organizationId') organizationId: string,
