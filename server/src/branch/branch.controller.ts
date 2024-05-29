@@ -30,10 +30,12 @@ export class BranchController {
   ) {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
-    if (
-      user.branch.organizationId !== organizationId ||
-      (user.role !== 'Manager' && user.role !== 'Admin')
-    ) {
+    const canCreate =
+      (user.organization.id === organizationId &&
+        user.role === 'Organization') ||
+      user.role === 'Admin';
+
+    if (!canCreate) {
       throw new UnauthorizedException();
     }
 
@@ -55,10 +57,12 @@ export class BranchController {
   ) {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
-    if (
-      user.branch.id !== branchId ||
-      (user.role !== 'Manager' && user.role !== 'Admin')
-    ) {
+    const canCreate =
+      (user.employee.branchId === branchId &&
+        user.employee.employeeType === 'Manager') ||
+      user.role === 'Admin';
+
+    if (!canCreate) {
       throw new UnauthorizedException();
     }
 
@@ -72,10 +76,12 @@ export class BranchController {
   ) {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
-    if (
-      user.branch.id !== branchId ||
-      (user.role !== 'Manager' && user.role !== 'Admin')
-    ) {
+    const canCreate =
+      (user.employee.branchId === branchId &&
+        user.employee.employeeType === 'Manager') ||
+      user.role === 'Admin';
+
+    if (!canCreate) {
       throw new UnauthorizedException();
     }
 

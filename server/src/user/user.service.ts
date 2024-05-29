@@ -1,41 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
 import { genSaltSync, hashSync } from 'bcrypt';
-import { CreateUserDto, CreateOrganizationUserDto, UpdateUserDto } from './dto';
+import { CreateUserDto, UpdateUserDto } from './dto';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
+  create(createUserDto: Partial<CreateUserDto>) {
     const hashedPassword = this.hashPassword(createUserDto.password);
 
     return this.prisma.user.create({
       data: {
-        ...createUserDto,
-        password: hashedPassword,
-      },
-      select: {
-        id: true,
-        email: true,
-        role: true,
-      },
-    });
-  }
+        email: createUserDto.email,
+        role: createUserDto.role,
+        firstName: createUserDto.firstName,
+        secondName: createUserDto.secondName,
+        lastName: createUserDto.lastName,
+        phoneNumber: createUserDto.phoneNumber,
 
-  createForOrganization(organizationUser: CreateOrganizationUserDto) {
-    const hashedPassword = this.hashPassword(organizationUser.password);
-
-    return this.prisma.user.create({
-      data: {
-        email: organizationUser.email,
         password: hashedPassword,
-        role: 'Manager',
-      },
-      select: {
-        id: true,
-        email: true,
-        role: true,
       },
     });
   }
@@ -47,16 +31,16 @@ export class UserService {
       },
       select: {
         id: true,
-        firstName: true,
-        secondName: true,
-        lastName: true,
-        email: true,
-        phoneNumber: true,
         role: true,
-        branch: {
+        organization: {
           select: {
             id: true,
-            organizationId: true,
+          },
+        },
+        employee: {
+          select: {
+            employeeType: true,
+            branchId: true
           },
         },
       },
@@ -69,13 +53,6 @@ export class UserService {
         email: {
           contains: email,
         },
-      },
-      select: {
-        id: true,
-        firstName: true,
-        secondName: true,
-        lastName: true,
-        email: true,
       },
     });
   }
@@ -91,12 +68,6 @@ export class UserService {
         ...updateUserDto,
         password: hashedPassword,
       },
-      select: {
-        id: true,
-        firstName: true,
-        secondName: true,
-        lastName: true,
-      },
     });
   }
 
@@ -104,12 +75,6 @@ export class UserService {
     return this.prisma.user.delete({
       where: {
         id,
-      },
-      select: {
-        id: true,
-        firstName: true,
-        secondName: true,
-        lastName: true,
       },
     });
   }

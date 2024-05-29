@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Patch,
@@ -13,7 +12,7 @@ import {
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
 import { BranchService } from '@branch/branch.service';
-import { CurrentUser, Public, Roles } from '@shared/decorators';
+import { CurrentUser, Roles } from '@shared/decorators';
 import { UserService } from '@user/user.service';
 
 @Controller('organization')
@@ -30,12 +29,6 @@ export class OrganizationController {
     return await this.organizationService.create(createOrganizationDto);
   }
 
-  @Public()
-  @Get(':name')
-  async findOneByName(@Param('name') name: string) {
-    return await this.organizationService.findManyByName(name);
-  }
-
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -45,8 +38,8 @@ export class OrganizationController {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
     if (
-      user.branch.organizationId !== id ||
-      (user.role !== 'Manager' && user.role !== 'Admin')
+      user.organization.id !== id ||
+      (user.role !== 'Organization' && user.role !== 'Admin')
     ) {
       throw new UnauthorizedException();
     }

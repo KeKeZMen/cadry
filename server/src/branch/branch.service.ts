@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CreateBranchDto,
-  CreateOrganizationBranchDto,
-  UpdateBranchDto,
-} from './dto';
+import { CreateBranchDto, UpdateBranchDto } from './dto';
 import { PrismaService } from '@prisma/prisma.service';
 
 @Injectable()
@@ -13,15 +9,6 @@ export class BranchService {
     return this.prisma.branch.create({
       data: {
         ...createBranchDto,
-      },
-    });
-  }
-
-  createForOrganization(organizationBranchDto: CreateOrganizationBranchDto) {
-    return this.prisma.branch.create({
-      data: {
-        email: organizationBranchDto.email,
-        organizationId: organizationBranchDto.organizationId,
       },
     });
   }
@@ -49,9 +36,6 @@ export class BranchService {
     return this.prisma.branch.delete({
       where: {
         id,
-      },
-      select: {
-        id: true,
       },
     });
   }

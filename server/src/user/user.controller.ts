@@ -10,13 +10,12 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto';
-import { CurrentUser, Roles } from '@shared/decorators';
+import { CurrentUser } from '@shared/decorators';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Roles('Admin')
   @Get(':email')
   async findByEmail(@Param('email') email: string) {
     return await this.userService.findUsersByEmail(email);

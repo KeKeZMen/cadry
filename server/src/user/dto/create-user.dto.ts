@@ -7,7 +7,5 @@ export class CreateUserDto {
   phoneNumber: string;
   email: string;
   password: string;
-  repeatPassword: string;
-  branchId: string | null;
   role: Role;
 }

@@ -1,5 +1,5 @@
 export class CreateOrganizationUserDto {
-  password: string;
+  userId: string;
+  inn: string;
   email: string;
-  branchId: string;
 }

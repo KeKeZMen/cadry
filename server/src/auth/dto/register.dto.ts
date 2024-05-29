@@ -9,7 +9,7 @@ import {
 
 export class RegisterDto {
   @IsString()
-  INN: string;
+  inn: string;
 
   @IsEmail({}, { message: 'Неверный формат почты' })
   email: string;

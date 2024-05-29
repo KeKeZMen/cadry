@@ -1,7 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { UserService } from '@user/user.service';
 import { OrganizationService } from '@organization/organization.service';
-import { BranchService } from '@branch/branch.service';
 import { RegisterDto } from './dto';
 
 @Injectable()
@@ -9,7 +8,6 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly organizationService: OrganizationService,
-    private readonly branchService: BranchService,
   ) {}
 
   async registerOrganization(registerDto: RegisterDto) {
@@ -21,20 +19,16 @@ export class AuthService {
       throw new ConflictException('Пользователь с таким email уже существует');
     }
 
-    const organization = await this.organizationService.createViaInn(
-      registerDto.INN,
-      registerDto.email,
-    );
-
-    const branch = await this.branchService.createForOrganization({
-      email: registerDto.email,
-      organizationId: organization.id,
-    });
-
-    return await this.userService.createForOrganization({
+    const user = await this.userService.create({
       email: registerDto.email,
       password: registerDto.password,
-      branchId: branch.id,
+      role: 'Organization',
+    });
+
+    return await this.organizationService.createOrganizationViaUser({
+      userId: user.id,
+      email: registerDto.email,
+      inn: registerDto.inn,
     });
   }
 }

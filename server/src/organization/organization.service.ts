@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
-import { CreateOrganizationDto, CreateOrganizationViaInnDto, UpdateOrganizationDto } from './dto';
+import {
+  CreateOrganizationDto,
+  UpdateOrganizationDto,
+  CreateOrganizationUserDto,
+} from './dto';
 
 @Injectable()
 export class OrganizationService {
@@ -14,11 +18,12 @@ export class OrganizationService {
     });
   }
 
-  createViaInn(createViaInnDto: CreateOrganizationViaInnDto) {
+  createOrganizationViaUser(
+    createOrganizationUserDto: CreateOrganizationUserDto,
+  ) {
     return this.prisma.organization.create({
       data: {
-        inn,
-        email,
+        ...createOrganizationUserDto,
         type: 'Organization',
       },
     });
@@ -28,20 +33,6 @@ export class OrganizationService {
     return this.prisma.organization.findFirst({
       where: {
         OR: [{ id: idOrEmail }, { email: idOrEmail }],
-      },
-    });
-  }
-
-  findMany() {
-    return this.prisma.organization.findMany();
-  }
-
-  findManyByName(name: string) {
-    return this.prisma.organization.findMany({
-      where: {
-        name: {
-          contains: name,
-        },
       },
     });
   }
