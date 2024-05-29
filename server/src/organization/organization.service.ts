@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@prisma/prisma.service';
+import { DatabaseService } from '@database/database.service';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
@@ -8,10 +8,10 @@ import {
 
 @Injectable()
 export class OrganizationService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly database: DatabaseService) {}
 
   create(createOrganizationDto: CreateOrganizationDto) {
-    return this.prisma.organization.create({
+    return this.database.organization.create({
       data: {
         ...createOrganizationDto,
       },
@@ -21,7 +21,7 @@ export class OrganizationService {
   createOrganizationViaUser(
     createOrganizationUserDto: CreateOrganizationUserDto,
   ) {
-    return this.prisma.organization.create({
+    return this.database.organization.create({
       data: {
         ...createOrganizationUserDto,
         type: 'Organization',
@@ -30,7 +30,7 @@ export class OrganizationService {
   }
 
   findOneByIdOrInn(idOrInn: string) {
-    return this.prisma.organization.findFirst({
+    return this.database.organization.findFirst({
       where: {
         OR: [{ id: idOrInn }, { inn: idOrInn }],
       },
@@ -38,7 +38,7 @@ export class OrganizationService {
   }
 
   update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
-    return this.prisma.organization.update({
+    return this.database.organization.update({
       where: {
         id,
       },
@@ -49,7 +49,7 @@ export class OrganizationService {
   }
 
   remove(id: string) {
-    return this.prisma.organization.delete({
+    return this.database.organization.delete({
       where: {
         id,
       },

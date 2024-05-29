@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBranchDto, UpdateBranchDto } from './dto';
-import { PrismaService } from '@prisma/prisma.service';
+import { DatabaseService } from '@database/database.service';
 
 @Injectable()
 export class BranchService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly database: DatabaseService) {}
   create(createBranchDto: CreateBranchDto) {
-    return this.prisma.branch.create({
+    return this.database.branch.create({
       data: {
         ...createBranchDto,
       },
@@ -14,7 +14,7 @@ export class BranchService {
   }
 
   findManyByOrganizationId(organizationId: string) {
-    return this.prisma.branch.findMany({
+    return this.database.branch.findMany({
       where: {
         organizationId,
       },
@@ -22,7 +22,7 @@ export class BranchService {
   }
 
   update(id: string, updateBranchDto: UpdateBranchDto) {
-    return this.prisma.branch.update({
+    return this.database.branch.update({
       where: {
         id,
       },
@@ -33,7 +33,7 @@ export class BranchService {
   }
 
   remove(id: string) {
-    return this.prisma.branch.delete({
+    return this.database.branch.delete({
       where: {
         id,
       },

@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@prisma/prisma.service';
 import { genSaltSync, hashSync } from 'bcrypt';
 import { CreateUserDto, UpdateUserDto } from './dto';
+import { DatabaseService } from '@database/database.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly database: DatabaseService) {}
 
   create(createUserDto: Partial<CreateUserDto>) {
     const hashedPassword = this.hashPassword(createUserDto.password);
 
-    return this.prisma.user.create({
+    return this.database.user.create({
       data: {
         email: createUserDto.email,
         role: createUserDto.role,
@@ -25,7 +25,7 @@ export class UserService {
   }
 
   findOneByIdOrEmail(idOrEmail: string) {
-    return this.prisma.user.findFirst({
+    return this.database.user.findFirst({
       where: {
         OR: [{ id: idOrEmail }, { email: idOrEmail }],
       },
@@ -41,7 +41,7 @@ export class UserService {
         employee: {
           select: {
             employeeType: true,
-            branchId: true
+            branchId: true,
           },
         },
       },
@@ -49,7 +49,7 @@ export class UserService {
   }
 
   findUsersByEmail(email: string) {
-    return this.prisma.user.findMany({
+    return this.database.user.findMany({
       where: {
         email: {
           contains: email,
@@ -61,7 +61,7 @@ export class UserService {
   update(id: string, updateUserDto: UpdateUserDto) {
     const hashedPassword = this.hashPassword(updateUserDto.password);
 
-    return this.prisma.user.update({
+    return this.database.user.update({
       where: {
         id,
       },
@@ -73,7 +73,7 @@ export class UserService {
   }
 
   delete(id: string) {
-    return this.prisma.user.delete({
+    return this.database.user.delete({
       where: {
         id,
       },

@@ -10,7 +10,7 @@ import { LoginDto } from './dto/login.dto';
 import { compareSync } from 'bcrypt';
 import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '@prisma/prisma.service';
+import { DatabaseService } from '@database/database.service';
 import { randomUUID } from 'crypto';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly organizationService: OrganizationService,
     private readonly jwtService: JwtService,
-    private readonly prisma: PrismaService,
+    private readonly database: DatabaseService,
   ) {}
 
   async registerOrganization(registerDto: RegisterDto) {
@@ -63,7 +63,7 @@ export class AuthService {
   }
 
   async refreshTokens(refreshToken: string, userAgent: string) {
-    const token = await this.prisma.token.findUnique({
+    const token = await this.database.token.findUnique({
       where: {
         token: refreshToken,
       },
@@ -73,7 +73,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    await this.prisma.token.delete({
+    await this.database.token.delete({
       where: {
         token: refreshToken,
       },
@@ -88,7 +88,7 @@ export class AuthService {
   }
 
   async deleteRefreshToken(token: string) {
-    return await this.prisma.token.delete({
+    return await this.database.token.delete({
       where: {
         token,
       },
@@ -113,7 +113,7 @@ export class AuthService {
   }
 
   private async getRefreshToken(userId: string, userAgent: string) {
-    const _token = await this.prisma.token.findFirst({
+    const _token = await this.database.token.findFirst({
       where: {
         userId,
         userAgent,
@@ -122,7 +122,7 @@ export class AuthService {
 
     const token = _token?.token ?? '';
 
-    return await this.prisma.token.upsert({
+    return await this.database.token.upsert({
       where: {
         token,
       },
