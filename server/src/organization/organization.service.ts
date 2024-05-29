@@ -29,10 +29,10 @@ export class OrganizationService {
     });
   }
 
-  findOneByIdOrEmail(idOrEmail: string) {
+  findOneByIdOrInn(idOrInn: string) {
     return this.prisma.organization.findFirst({
       where: {
-        OR: [{ id: idOrEmail }, { email: idOrEmail }],
+        OR: [{ id: idOrInn }, { inn: idOrInn }],
       },
     });
   }
