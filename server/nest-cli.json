@@ -9,11 +9,11 @@
   "projects": {
     "share": {
       "type": "library",
-      "root": "libs/share",
+      "root": "libs/shared",
       "entryFile": "index",
-      "sourceRoot": "libs/share/src",
+      "sourceRoot": "libs/shared/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/share/tsconfig.lib.json"
+        "tsConfigPath": "libs/shared/tsconfig.lib.json"
       }
     }
   }
