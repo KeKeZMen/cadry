@@ -18,7 +18,6 @@ export class UserService {
         secondName: createUserDto.secondName,
         lastName: createUserDto.lastName,
         phoneNumber: createUserDto.phoneNumber,
-
         password: hashedPassword,
       },
     });
@@ -55,6 +54,10 @@ export class UserService {
           contains: email,
         },
       },
+      select: {
+        email: true,
+        role: true,
+      },
     });
   }
 
@@ -69,6 +72,9 @@ export class UserService {
         ...updateUserDto,
         password: hashedPassword,
       },
+      select: {
+        id: true,
+      },
     });
   }
 
@@ -76,6 +82,9 @@ export class UserService {
     return this.database.user.delete({
       where: {
         id,
+      },
+      select: {
+        id: true,
       },
     });
   }
