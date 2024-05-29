@@ -8,12 +8,14 @@ import {
   Delete,
   ParseUUIDPipe,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { BranchService } from './branch.service';
 import { CreateBranchDto } from './dto/create-branch.dto';
 import { UpdateBranchDto } from './dto/update-branch.dto';
-import { CurrentUser, Public } from '@shared/decorators';
+import { CurrentUser, Public, Roles } from '@shared/decorators';
 import { UserService } from '@user/user.service';
+import { RolesGuard } from '@auth/guards/roles.guards';
 
 @Controller('branch')
 export class BranchController {
@@ -39,7 +41,7 @@ export class BranchController {
       throw new UnauthorizedException();
     }
 
-    return this.branchService.create(createBranchDto);
+    return this.branchService.create(createBranchDto, organizationId);
   }
 
   @Public()
@@ -70,19 +72,25 @@ export class BranchController {
     return await this.branchService.update(branchId, updateBranchDto);
   }
 
+  @Roles('Admin', 'Employee', 'Organization')
+  @UseGuards(RolesGuard)
   @Delete(':branchId')
   async remove(
     @Param('branchId') branchId: string,
     @CurrentUser() currentUser: IJwtPayload,
   ) {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
+    const organization =
+      await this.branchService.getOrganizationIdByBranch(branchId);
 
-    const canCreate =
+    const canDelete =
       (user.employee.branchId === branchId &&
         user.employee.employeeType === 'Manager') ||
-      user.role === 'Admin';
+      user.role === 'Admin' ||
+      (user.role === 'Organization' &&
+        user.organization.id === organization.id);
 
-    if (!canCreate) {
+    if (!canDelete) {
       throw new UnauthorizedException();
     }
 
