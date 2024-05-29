@@ -98,11 +98,14 @@ export class AuthService {
   private async generateTokens(user: Partial<User>, userAgent: string) {
     const accessToken =
       'Bearer ' +
-      this.jwtService.sign({
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      });
+      this.jwtService.sign(
+        {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
+        { expiresIn: '15m' },
+      );
 
     const refreshToken = await this.getRefreshToken(user.id, userAgent);
 
@@ -127,13 +130,13 @@ export class AuthService {
         token,
       },
       update: {
-        exp: new Date(new Date().getTime() + 6 * 24 * 60 * 60 * 1000),
+        exp: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
         token: randomUUID(),
       },
       create: {
         userId,
         userAgent,
-        exp: new Date(new Date().getTime() + 6 * 24 * 60 * 60 * 1000),
+        exp: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
         token: randomUUID(),
       },
     });
