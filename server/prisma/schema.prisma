@@ -29,8 +29,10 @@ model User {
 model Employee {
   userId       String       @unique @map("user_id")
   employeeType EmployeeType @map("employee_type")
+  branchId     String       @map("branch_id")
 
-  user User @relation(fields: [userId], references: [id])
+  branch Branch @relation(fields: [branchId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   @@map("employees")
 }
@@ -118,12 +120,12 @@ model Organization {
 model Branch {
   id             String  @id @default(uuid())
   organizationId String  @map("organization_id")
-  inn            String? @unique @db.Char(12)
   address        String?
   phoneNumber    String? @map("phone_number")
   email          String  @unique
 
   organization Organization @relation(fields: [organizationId], references: [id])
+  employees    Employee[]
 
   @@index([id])
   @@map("branches")
