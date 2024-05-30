@@ -17,7 +17,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get(':email')
-  async findByEmail(@Param('email') email: string) {
+  async findUsersByEmail(@Param('email') email: string) {
     return await this.userService.findUsersByEmail(email);
   }
 
