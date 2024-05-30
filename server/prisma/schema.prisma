@@ -38,19 +38,21 @@ model Employee {
 }
 
 model Student {
-  userId                  String             @unique @map("user_id")
-  birthDate               DateTime           @map("birth_date")
-  photoUrl                String?            @map("photo_url")
-  graduateYear            Int                @map("graduate_year")
+  userId                  String   @unique @map("user_id")
+  birthDate               DateTime @map("birth_date")
+  photoUrl                String?  @map("photo_url")
+  graduateYear            Int      @map("graduate_year")
   address                 String
-  portfolioUrl            String?            @map("portfolio_url")
-  readyToMove             Boolean            @default(false) @map("ready_to_move")
-  subInfo                 String?            @map("sub_info")
-  educationOrganizationId String             @map("education_organization_id")
-  favoritesOrganizations  String[]           @map("favorites_organizations")
-  professionId            Int                @map("profession_id")
-  gender                  Gender
-  disability              DisabilitiesTypes?
+  portfolioUrl            String?  @map("portfolio_url")
+  readyToMove             Boolean  @default(false) @map("ready_to_move")
+  subInfo                 String?  @map("sub_info")
+  educationOrganizationId String   @map("education_organization_id")
+  favoritesOrganizations  String[] @map("favorites_organizations")
+  professionId            Int      @map("profession_id")
+  isActive                Boolean  @default(false) @map("is_active")
+
+  gender     Gender
+  disability DisabilitiesTypes?
 
   user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   educationOrganization Organization @relation(fields: [educationOrganizationId], references: [id])
