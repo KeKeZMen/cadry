@@ -28,6 +28,8 @@
       "@branch/*": ["src/branch/*"],
       "@organization": ["src/organization"],
       "@organization/*": ["src/organization/*"],
+      "@employee": ["src/employee"],
+      "@employee/*": ["src/employee/*"],
       "@shared": ["libs/shared/src"],
       "@shared/*": ["libs/shared/src/*"]
     }
