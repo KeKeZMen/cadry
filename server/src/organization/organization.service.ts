@@ -37,6 +37,14 @@ export class OrganizationService {
     });
   }
 
+  findOneByUserId(userId: string) {
+    return this.database.organization.findFirst({
+      where: {
+        userId,
+      },
+    });
+  }
+
   update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
     return this.database.organization.update({
       where: {
