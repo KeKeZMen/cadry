@@ -45,6 +45,14 @@ export class OrganizationService {
     });
   }
 
+  findOneByName(name: string) {
+    return this.database.organization.findFirst({
+      where: {
+        name,
+      },
+    });
+  }
+
   update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
     return this.database.organization.update({
       where: {
