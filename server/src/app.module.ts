@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { OrganizationModule } from '@organization/organization.module';
 import { UserModule } from '@user/user.module';
+import { StudentModule } from './student/student.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UserModule } from '@user/user.module';
     OrganizationModule,
     BranchModule,
     EmployeeModule,
+    StudentModule,
   ],
   providers: [
     {
