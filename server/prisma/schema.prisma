@@ -50,7 +50,7 @@ model Student {
   favoritesOrganizations  String[] @map("favorites_organizations")
   professionId            Int      @map("profession_id")
   isActive                Boolean  @default(false) @map("is_active")
-  gpa                     Float
+  gpa                     Float    @db.DoublePrecision()
   socialAdaptability      Int      @map("social_adaptability")
 
   gender     Gender

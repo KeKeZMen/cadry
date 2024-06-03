@@ -25,6 +25,8 @@ export class StudentService {
         educationOrganizationId: createStudentDto.educationOrganizationId,
         professionId: createStudentDto.professionId,
         userId: createStudentDto.userId,
+        gpa: createStudentDto.gpa,
+        socialAdaptability: createStudentDto.socialAdaptability,
       },
     });
   }
@@ -74,7 +76,7 @@ export class StudentService {
           .value.toString()
           .trim()
           .split('.')
-          .map((d) => +d);    
+          .map((d) => +d);
 
         await this.create({
           userId: user.id,
