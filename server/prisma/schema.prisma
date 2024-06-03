@@ -50,6 +50,8 @@ model Student {
   favoritesOrganizations  String[] @map("favorites_organizations")
   professionId            Int      @map("profession_id")
   isActive                Boolean  @default(false) @map("is_active")
+  gpa                     Float
+  socialAdaptability      Int      @map("social_adaptability")
 
   gender     Gender
   disability DisabilitiesTypes?
