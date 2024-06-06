@@ -30,6 +30,14 @@
       "@organization/*": ["src/organization/*"],
       "@employee": ["src/employee"],
       "@employee/*": ["src/employee/*"],
+      "@student": ["src/student"],
+      "@student/*": ["src/student/*"],
+      "@direction": ["src/direction"],
+      "@direction/*": ["src/direction/*"],
+      "@profession": ["src/profession"],
+      "@profession/*": ["src/profession/*"],
+      "@speciality": ["src/speciality"],
+      "@speciality/*": ["src/speciality/*"],
       "@shared": ["libs/shared/src"],
       "@shared/*": ["libs/shared/src/*"]
     }
