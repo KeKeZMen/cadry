@@ -1,17 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@database/database.service';
-import * as ExcelJs from "exceljs"
-import * as tmp from "tmp"
+import { tmpNameSync } from 'tmp';
+import { createReadStream } from 'fs';
+import { Workbook } from 'exceljs';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
   CreateOrganizationUserDto,
 } from './dto';
-import { Stream } from 'stream';
+import { DirectionService } from '@direction/direction.service';
+import { ProfessionService } from '@profession/profession.service';
 
 @Injectable()
 export class OrganizationService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(
+    private readonly database: DatabaseService,
+    private readonly directionService: DirectionService,
+    private readonly professionService: ProfessionService,
+  ) {}
 
   create(createOrganizationDto: CreateOrganizationDto) {
     return this.database.organization.create({
@@ -56,21 +62,36 @@ export class OrganizationService {
     });
   }
 
-  async getDocumentTemplateStream() {
-    const workbook = new ExcelJs.stream.xlsx.WorkbookWriter({ filename: "Шаблон", useStyles: true })
-    const templateWorksheet = workbook.addWorksheet("Шаблон") 
-    const dataWorksheet = workbook.addWorksheet("Данные")
-    
-    const stream = new Stream()
+  async getTemplateStream(professionId: number, organizationId: string) {
+    const organization = await this.findOneByIdOrInn(organizationId);
+    const profession = await this.professionService.findOneById(professionId);
 
-    stream.on("data", () => {
-      dataWorksheet.columns = [
-        { key: "lastName", header: "Фамилия" },
-        { key: "firstName", header: "Фамилия" },
-      ]
-    })
+    const tmpPath = tmpNameSync();
+    const workbook = new Workbook();
 
-    stream.on("end", () => {})
+    const dataWorksheet = workbook.addWorksheet('Данные');
+
+    const templateWorksheet = workbook.addWorksheet('Шаблон');
+    templateWorksheet.addRow(['Направление/Специальность', profession.name]);
+    templateWorksheet.addRow(['Год выпуска', new Date().getFullYear()]);
+    templateWorksheet.addRow(['Образовательное учреждение', organization.name]);
+    templateWorksheet.addRow([
+      'Фамилия',
+      'Имя',
+      'Отчетсво',
+      'Дата рождения',
+      'Пол',
+      'Телефон',
+      'Email',
+      'Населенный пункт регистрации',
+      'Средний балл по аттестату(5-бальная шкала)',
+      'Социальная адаптированность(100-бальная шкала)',
+      'Основная профессия',
+    ]);
+
+    await workbook.xlsx.writeFile(tmpPath);
+
+    return createReadStream(tmpPath);
   }
 
   update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
