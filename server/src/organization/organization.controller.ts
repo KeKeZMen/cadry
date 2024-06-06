@@ -9,13 +9,17 @@ import {
   ConflictException,
   UnauthorizedException,
   UseGuards,
+  Get,
+  Res,
+  Header,
 } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
 import { BranchService } from '@branch/branch.service';
-import { CurrentUser, Roles } from '@shared/decorators';
+import { CurrentUser, Public, Roles } from '@shared/decorators';
 import { UserService } from '@user/user.service';
 import { RolesGuard } from '@auth/guards/roles.guards';
+import { Response } from 'express';
 
 @Controller('organization')
 export class OrganizationController {
@@ -61,5 +65,26 @@ export class OrganizationController {
     }
 
     return await this.organizationService.remove(id);
+  }
+
+  // @Roles('Employee')
+  // @UseGuards(RolesGuard)
+  @Public()
+  @Header(
+    'Content-Type',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  )
+  @Get('template/:organizationId/:professionId')
+  async getDocumentTemplate(
+    @Param('organizationId') organizationId: string,
+    @Param('professionId') directionId: number,
+    @Res() res: Response,
+  ) {
+    const fileStream = await this.organizationService.getTemplateStream(
+      directionId,
+      organizationId,
+    );
+
+    fileStream.pipe(res);
   }
 }
