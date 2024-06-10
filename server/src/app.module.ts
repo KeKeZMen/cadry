@@ -8,10 +8,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { OrganizationModule } from '@organization/organization.module';
-import { ProfessionModule } from '@profession/profession.module';
 import { SpecialityModule } from '@speciality/speciality.module';
 import { StudentModule } from '@student/student.module';
 import { UserModule } from '@user/user.module';
+import { WorkProfessionModule } from '@work-profession/work-profession.module';
 
 @Module({
   imports: [
@@ -25,7 +25,7 @@ import { UserModule } from '@user/user.module';
     StudentModule,
     DirectionModule,
     SpecialityModule,
-    ProfessionModule,
+    WorkProfessionModule,
   ],
   providers: [
     {
