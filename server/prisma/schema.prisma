@@ -48,7 +48,7 @@ model Student {
   subInfo                 String?  @map("sub_info")
   educationOrganizationId String   @map("education_organization_id")
   favoritesOrganizations  String[] @map("favorites_organizations")
-  subProfessions          String[] @map("sub_professions")
+  subProfessions          Int[]    @map("sub_professions")
   specialityId            Int      @map("speciality_id")
   isActive                Boolean  @default(false) @map("is_active")
   gpa                     Float    @db.DoublePrecision()
@@ -164,7 +164,7 @@ model Speciality {
 }
 
 model WorkProfessionToSpeciality {
-  id               Int @id
+  id               Int @id @default(autoincrement())
   specialityId     Int @map("speciality_id")
   workProfessionId Int @map("work_profession_id")
 
