@@ -43,7 +43,7 @@ export class UserController {
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() currentUser: IJwtPayload,
   ) {
-    if (currentUser.role !== 'Admin' && currentUser.id !== id) {
+    if (currentUser.role !== 'Admin') {
       throw new UnauthorizedException();
     }
 
