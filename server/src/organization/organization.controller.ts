@@ -67,21 +67,21 @@ export class OrganizationController {
     return await this.organizationService.remove(id);
   }
 
-  // @Roles('Employee')
+  // @Roles('Employee', 'Admin')
   // @UseGuards(RolesGuard)
-  @Public()
   @Header(
     'Content-Type',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   )
-  @Get('template/:organizationId/:professionId')
+  @Public()
+  @Get('template/:organizationId/:specialityId')
   async getDocumentTemplate(
     @Param('organizationId') organizationId: string,
-    @Param('professionId') directionId: number,
+    @Param('specialityId') specialityId: string,
     @Res() res: Response,
   ) {
     const fileStream = await this.organizationService.getTemplateStream(
-      directionId,
+      +specialityId,
       organizationId,
     );
 

@@ -7,16 +7,16 @@ import {
   UpdateOrganizationDto,
   CreateOrganizationUserDto,
 } from './dto';
-import { DirectionService } from '@direction/direction.service';
 import { WorkProfessionService } from '@work-profession/work-profession.service';
 import { DatabaseService } from '@database/database.service';
+import { SpecialityService } from '@speciality/speciality.service';
 
 @Injectable()
 export class OrganizationService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly directionService: DirectionService,
-    private readonly professionService: WorkProfessionService,
+    private readonly specialityService: SpecialityService,
+    private readonly workProfessionService: WorkProfessionService,
   ) {}
 
   create(createOrganizationDto: CreateOrganizationDto) {
@@ -29,7 +29,7 @@ export class OrganizationService {
 
   createOrganizationViaUser(
     createOrganizationUserDto: CreateOrganizationUserDto,
-  ) {    
+  ) {
     return this.databaseService.organization.create({
       data: {
         ...createOrganizationUserDto,
@@ -38,10 +38,10 @@ export class OrganizationService {
     });
   }
 
-  findOneByUserIdOrInn(userIdOrInn: string) {
+  findOneByIdOrInn(idOrInn: string) {
     return this.databaseService.organization.findFirst({
       where: {
-        OR: [{ userId: userIdOrInn }, { inn: userIdOrInn }],
+        OR: [{ id: idOrInn }, { inn: idOrInn }],
       },
     });
   }
@@ -62,23 +62,28 @@ export class OrganizationService {
     });
   }
 
-  async getTemplateStream(professionId: number, userId: string) {
-    const organization = await this.findOneByUserIdOrInn(userId);
-    const profession = await this.professionService.findOneById(professionId);
+  async getTemplateStream(specialityId: number, organizationId: string) {
+    const organization = await this.findOneByIdOrInn(organizationId);
+    const speciality = await this.specialityService.findOneById(specialityId);
+    const professions =
+      await this.workProfessionService.findManyBySpecialityId(specialityId);
 
     const tmpPath = tmpNameSync();
     const workbook = new Workbook();
 
     const dataWorksheet = workbook.addWorksheet('Данные');
+    professions.forEach((profession) => {
+      dataWorksheet.addRow([profession.workProfession.name]);
+    });
 
     const templateWorksheet = workbook.addWorksheet('Шаблон');
-    templateWorksheet.addRow(['Направление/Специальность', profession.name]);
+    templateWorksheet.addRow(['Направление/Специальность', speciality.name]);
     templateWorksheet.addRow(['Год выпуска', new Date().getFullYear()]);
     templateWorksheet.addRow(['Образовательное учреждение', organization.name]);
     templateWorksheet.addRow([
       'Фамилия',
       'Имя',
-      'Отчетсво',
+      'Отчество',
       'Дата рождения',
       'Пол',
       'Телефон',
@@ -91,6 +96,20 @@ export class OrganizationService {
       'Доп. профессия 3',
       'Основная профессия',
     ]);
+
+    for (let i = 11; i <= 14; i++) {
+      for (let j = 5; j <= 40; j++) {
+        const cell = templateWorksheet.getCell(j, i);
+        cell.dataValidation = {
+          type: 'list',
+          promptTitle: 'Выберите значение',
+          prompt: 'Выберите значение из списка',
+          allowBlank: true,
+          formulae: [`=Данные!$A:$A`],
+          showErrorMessage: true,
+        };
+      }
+    }
 
     await workbook.xlsx.writeFile(tmpPath);
 
