@@ -27,6 +27,17 @@ export class WorkProfessionService {
     return this.databaseService.workProfession.findMany();
   }
 
+  findManyBySpecialityId(specialityId: number) {
+    return this.databaseService.workProfessionToSpeciality.findMany({
+      where: {
+        specialityId,
+      },
+      select: {
+        workProfession: true,
+      },
+    });
+  }
+
   update(id: number, updateProfessionDto: UpdateWorkProfessionDto) {
     return this.databaseService.workProfession.update({
       where: {
