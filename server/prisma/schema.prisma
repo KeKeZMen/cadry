@@ -57,7 +57,7 @@ model Student {
   disability DisabilitiesTypes?
 
   user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  educationOrganization Organization @relation(fields: [educationOrganizationId], references: [userId])
+  educationOrganization Organization @relation(fields: [educationOrganizationId], references: [id])
   speciality            Speciality   @relation(fields: [specialityId], references: [id])
 
   @@map("students")
@@ -89,16 +89,17 @@ model Request {
   quotas                  Boolean   @default(false)
   description             String
 
-  educationOrganization Organization?   @relation("education", fields: [educationOrganizationId], references: [userId])
+  educationOrganization Organization?   @relation("education", fields: [educationOrganizationId], references: [id])
   profession            WorkProfession? @relation(fields: [professionId], references: [id])
   speciality            Speciality?     @relation(fields: [specialityId], references: [id])
-  workOrganization      Organization    @relation("work", fields: [workOrganizationId], references: [userId])
+  workOrganization      Organization    @relation("work", fields: [workOrganizationId], references: [id])
 
   @@index([id])
   @@map("requests")
 }
 
 model Organization {
+  id          String           @id @default(uuid())
   userId      String           @unique @map("user_id")
   name        String?
   phoneNumber String?          @map("phone_number")
@@ -110,13 +111,13 @@ model Organization {
   logoUrl     String?          @map("logo_url")
   type        OrganizationType
 
-  user                         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                         User      @relation(fields: [id], references: [id], onDelete: Cascade)
   educationOrganizationRequest Request[] @relation("education")
   workOrganizationRequests     Request[] @relation("work")
   students                     Student[]
   branches                     Branch[]
 
-  @@index([userId])
+  @@index([id])
   @@map("organizations")
 }
 
@@ -127,7 +128,7 @@ model Branch {
   phoneNumber    String? @map("phone_number")
   email          String  @unique
 
-  organization Organization @relation(fields: [organizationId], references: [userId])
+  organization Organization @relation(fields: [organizationId], references: [id])
   employees    Employee[]
 
   @@index([id])
