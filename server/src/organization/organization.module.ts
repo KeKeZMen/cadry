@@ -4,12 +4,12 @@ import { BranchModule } from '@branch/branch.module';
 import { DirectionModule } from '@direction/direction.module';
 import { OrganizationService } from './organization.service';
 import { OrganizationController } from './organization.controller';
-import { ProfessionModule } from '@profession/profession.module';
+import { WorkProfessionModule } from '@work-profession/work-profession.module';
 
 @Module({
   controllers: [OrganizationController],
   providers: [OrganizationService],
-  imports: [UserModule, BranchModule, DirectionModule, ProfessionModule],
+  imports: [UserModule, BranchModule, DirectionModule, WorkProfessionModule],
   exports: [OrganizationService],
 })
 export class OrganizationModule {}

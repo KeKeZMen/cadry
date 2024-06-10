@@ -9,14 +9,14 @@ import {
   CreateOrganizationUserDto,
 } from './dto';
 import { DirectionService } from '@direction/direction.service';
-import { ProfessionService } from '@profession/profession.service';
+import { WorkProfessionService } from '@work-profession/work-profession.service';
 
 @Injectable()
 export class OrganizationService {
   constructor(
     private readonly database: DatabaseService,
     private readonly directionService: DirectionService,
-    private readonly professionService: ProfessionService,
+    private readonly professionService: WorkProfessionService,
   ) {}
 
   create(createOrganizationDto: CreateOrganizationDto) {
@@ -38,10 +38,10 @@ export class OrganizationService {
     });
   }
 
-  findOneByIdOrInn(idOrInn: string) {
+  findOneByUserIdOrInn(userIdOrInn: string) {
     return this.database.organization.findFirst({
       where: {
-        OR: [{ id: idOrInn }, { inn: idOrInn }],
+        OR: [{ userId: userIdOrInn }, { inn: userIdOrInn }],
       },
     });
   }
@@ -62,8 +62,8 @@ export class OrganizationService {
     });
   }
 
-  async getTemplateStream(professionId: number, organizationId: string) {
-    const organization = await this.findOneByIdOrInn(organizationId);
+  async getTemplateStream(professionId: number, userId: string) {
+    const organization = await this.findOneByUserIdOrInn(userId);
     const profession = await this.professionService.findOneById(professionId);
 
     const tmpPath = tmpNameSync();
@@ -86,6 +86,9 @@ export class OrganizationService {
       'Населенный пункт регистрации',
       'Средний балл по аттестату(5-бальная шкала)',
       'Социальная адаптированность(100-бальная шкала)',
+      'Доп. профессия 1',
+      'Доп. профессия 2',
+      'Доп. профессия 3',
       'Основная профессия',
     ]);
 
@@ -94,27 +97,27 @@ export class OrganizationService {
     return createReadStream(tmpPath);
   }
 
-  update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
+  update(userId: string, updateOrganizationDto: UpdateOrganizationDto) {
     return this.database.organization.update({
       where: {
-        id,
+        userId,
       },
       data: {
         ...updateOrganizationDto,
       },
       select: {
-        id: true,
+        userId: true,
       },
     });
   }
 
-  remove(id: string) {
+  remove(userId: string) {
     return this.database.organization.delete({
       where: {
-        id,
+        userId,
       },
       select: {
-        id: true,
+        userId: true,
       },
     });
   }
