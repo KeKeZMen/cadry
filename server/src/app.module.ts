@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { OrganizationModule } from '@organization/organization.module';
 import { SpecialityModule } from '@speciality/speciality.module';
+import { IsActiveGuard } from '@student/guards/IsActive.guard';
 import { StudentModule } from '@student/student.module';
 import { UserModule } from '@user/user.module';
 import { WorkProfessionModule } from '@work-profession/work-profession.module';
@@ -31,6 +32,10 @@ import { WorkProfessionModule } from '@work-profession/work-profession.module';
     {
       provide: APP_GUARD,
       useClass: JwtGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: IsActiveGuard,
     },
   ],
 })
