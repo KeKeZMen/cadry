@@ -77,7 +77,7 @@ export class StudentService {
         worksheet.getCell(j, 11).value.toString(),
         worksheet.getCell(j, 12).value.toString(),
         worksheet.getCell(j, 13).value.toString(),
-      ];
+      ].filter(el => el);
 
       const date = worksheet
         .getCell(j, 4)
