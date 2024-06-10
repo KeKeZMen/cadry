@@ -12,7 +12,7 @@ import {
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { RolesGuard } from '@auth/guards/roles.guards';
-import { Roles } from '@shared/decorators';
+import { Public, Roles } from '@shared/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('student')
@@ -30,13 +30,16 @@ export class StudentController {
     return await this.studentService.importStudents(file);
   }
 
-  @Get(':userIdOrEmail')
-  async findOneByUserIdOrEmail(@Param('userIdOrEmail') userIdOrEmail: string) {
-    return await this.studentService.findOneByUserIdOrEmail(userIdOrEmail);
+  @Get(':email')
+  async findOneByUserIdOrEmail(@Param('email') email: string) {
+    return await this.studentService.findOneByUserIdOrEmail(email);
   }
 
+  @Public()
   @Get('activation/:userId')
-  async activateStudent(@Param('userId') userId: string) {}
+  async activateStudent(@Param('userId') userId: string) {
+    return await this.studentService.activateStudent(userId);
+  }
 
   @UseGuards(RolesGuard)
   @Roles('Admin')

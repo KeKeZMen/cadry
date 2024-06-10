@@ -11,7 +11,7 @@ export class CreateStudentDto {
   phoneNumber: string;
   address: string;
   educationOrganizationId: string;
-  professionId: number;
+  specialityId: number;
   gpa: number;
   socialAdaptability: number;
   subProfession: number[];
