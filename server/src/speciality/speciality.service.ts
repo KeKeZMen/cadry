@@ -16,8 +16,17 @@ export class SpecialityService {
     });
   }
 
-  addWorkProfession(id: number, addWorkProfessionDto: AddWorkProfessionDto) {
-    return this.databaseService.workProfessionToSpeciality.createMany({
+  async addWorkProfession(
+    id: number,
+    addWorkProfessionDto: AddWorkProfessionDto,
+  ) {
+    await this.databaseService.workProfessionToSpeciality.deleteMany({
+      where: {
+        specialityId: id,
+      },
+    });
+
+    return await this.databaseService.workProfessionToSpeciality.createMany({
       data: [
         ...addWorkProfessionDto.workProfessions.map((workProfession) => ({
           specialityId: id,
