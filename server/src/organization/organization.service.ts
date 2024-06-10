@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '@database/database.service';
 import { tmpNameSync } from 'tmp';
 import { createReadStream } from 'fs';
 import { Workbook } from 'exceljs';
@@ -10,17 +9,18 @@ import {
 } from './dto';
 import { DirectionService } from '@direction/direction.service';
 import { WorkProfessionService } from '@work-profession/work-profession.service';
+import { DatabaseService } from '@database/database.service';
 
 @Injectable()
 export class OrganizationService {
   constructor(
-    private readonly database: DatabaseService,
+    private readonly databaseService: DatabaseService,
     private readonly directionService: DirectionService,
     private readonly professionService: WorkProfessionService,
   ) {}
 
   create(createOrganizationDto: CreateOrganizationDto) {
-    return this.database.organization.create({
+    return this.databaseService.organization.create({
       data: {
         ...createOrganizationDto,
       },
@@ -29,8 +29,8 @@ export class OrganizationService {
 
   createOrganizationViaUser(
     createOrganizationUserDto: CreateOrganizationUserDto,
-  ) {
-    return this.database.organization.create({
+  ) {    
+    return this.databaseService.organization.create({
       data: {
         ...createOrganizationUserDto,
         type: 'Organization',
@@ -39,7 +39,7 @@ export class OrganizationService {
   }
 
   findOneByUserIdOrInn(userIdOrInn: string) {
-    return this.database.organization.findFirst({
+    return this.databaseService.organization.findFirst({
       where: {
         OR: [{ userId: userIdOrInn }, { inn: userIdOrInn }],
       },
@@ -47,7 +47,7 @@ export class OrganizationService {
   }
 
   findOneByUserId(userId: string) {
-    return this.database.organization.findFirst({
+    return this.databaseService.organization.findFirst({
       where: {
         userId,
       },
@@ -55,7 +55,7 @@ export class OrganizationService {
   }
 
   findOneByName(name: string) {
-    return this.database.organization.findFirst({
+    return this.databaseService.organization.findFirst({
       where: {
         name,
       },
@@ -98,7 +98,7 @@ export class OrganizationService {
   }
 
   update(userId: string, updateOrganizationDto: UpdateOrganizationDto) {
-    return this.database.organization.update({
+    return this.databaseService.organization.update({
       where: {
         userId,
       },
@@ -112,7 +112,7 @@ export class OrganizationService {
   }
 
   remove(userId: string) {
-    return this.database.organization.delete({
+    return this.databaseService.organization.delete({
       where: {
         userId,
       },
