@@ -48,7 +48,7 @@ model Student {
   subInfo                 String?  @map("sub_info")
   educationOrganizationId String   @map("education_organization_id")
   favoritesOrganizations  String[] @map("favorites_organizations")
-  professionId            Int      @map("profession_id")
+  specialityId            Int      @map("speciality_id")
   isActive                Boolean  @default(false) @map("is_active")
   gpa                     Float    @db.DoublePrecision()
   socialAdaptability      Int      @map("social_adaptability")
@@ -57,8 +57,8 @@ model Student {
   disability DisabilitiesTypes?
 
   user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  educationOrganization Organization @relation(fields: [educationOrganizationId], references: [id])
-  profession            Profession   @relation(fields: [professionId], references: [id])
+  educationOrganization Organization @relation(fields: [educationOrganizationId], references: [userId])
+  speciality            Speciality   @relation(fields: [specialityId], references: [id])
 
   @@map("students")
 }
@@ -89,17 +89,16 @@ model Request {
   quotas                  Boolean   @default(false)
   description             String
 
-  educationOrganization Organization? @relation("education", fields: [educationOrganizationId], references: [id])
-  profession            Profession?   @relation(fields: [professionId], references: [id])
-  speciality            Speciality?   @relation(fields: [specialityId], references: [id])
-  workOrganization      Organization  @relation("work", fields: [workOrganizationId], references: [id])
+  educationOrganization Organization?   @relation("education", fields: [educationOrganizationId], references: [userId])
+  profession            WorkProfession? @relation(fields: [professionId], references: [id])
+  speciality            Speciality?     @relation(fields: [specialityId], references: [id])
+  workOrganization      Organization    @relation("work", fields: [workOrganizationId], references: [userId])
 
   @@index([id])
   @@map("requests")
 }
 
 model Organization {
-  id          String           @id @default(uuid())
   userId      String           @unique @map("user_id")
   name        String?
   phoneNumber String?          @map("phone_number")
@@ -111,13 +110,13 @@ model Organization {
   logoUrl     String?          @map("logo_url")
   type        OrganizationType
 
-  user                         User      @relation(fields: [userId], references: [id])
+  user                         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   educationOrganizationRequest Request[] @relation("education")
   workOrganizationRequests     Request[] @relation("work")
   students                     Student[]
   branches                     Branch[]
 
-  @@index([id])
+  @@index([userId])
   @@map("organizations")
 }
 
@@ -128,7 +127,7 @@ model Branch {
   phoneNumber    String? @map("phone_number")
   email          String  @unique
 
-  organization Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [userId])
   employees    Employee[]
 
   @@index([id])
@@ -136,8 +135,9 @@ model Branch {
 }
 
 model Direction {
-  id  Int    @id @default(autoincrement())
-  key String
+  id   Int    @id @default(autoincrement())
+  key  String
+  name String
 
   specialities Speciality[]
 
@@ -147,26 +147,38 @@ model Direction {
 
 model Speciality {
   id          Int    @id @default(autoincrement())
+  name        String
   key         String
   directionId Int    @map("direction_id")
 
-  direction   Direction    @relation(fields: [directionId], references: [id])
-  professions Profession[]
-  requests    Request[]
+  direction Direction @relation(fields: [directionId], references: [id])
+  students  Student[]
+  requests  Request[]
+
+  workProfession WorkProfessionToSpeciality[]
 
   @@index([id])
   @@map("specialities")
 }
 
-model Profession {
-  id           Int    @id @default(autoincrement())
-  key          String
-  name         String
-  specialityId Int    @map("speciality_id")
+model WorkProfessionToSpeciality {
+  id               Int @id
+  specialityId     Int @map("speciality_id")
+  workProfessionId Int @map("work_profession_id")
 
-  speciality Speciality @relation(fields: [specialityId], references: [id])
-  requests   Request[]
-  students   Student[]
+  speciality     Speciality     @relation(fields: [specialityId], references: [id])
+  workProfession WorkProfession @relation(fields: [workProfessionId], references: [id])
+
+  @@index([id])
+  @@map("work_profession_to_speciality")
+}
+
+model WorkProfession {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  requests     Request[]
+  specialities WorkProfessionToSpeciality[]
 
   @@index([id])
   @@map("professions")
