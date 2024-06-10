@@ -16,7 +16,7 @@ import { Roles } from '@shared/decorators';
 
 @Roles('Admin')
 @UseGuards(RolesGuard)
-@Controller('profession')
+@Controller('work-profession')
 export class WorkProfessionController {
   constructor(private readonly workProfessionService: WorkProfessionService) {}
 
