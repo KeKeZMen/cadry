@@ -18,12 +18,12 @@ export class SpecialityService {
 
   addWorkProfession(id: number, addWorkProfessionDto: AddWorkProfessionDto) {
     return this.databaseService.workProfessionToSpeciality.createMany({
-      data: {
+      data: [
         ...addWorkProfessionDto.workProfessions.map((workProfession) => ({
           specialityId: id,
           workProfessionId: workProfession,
         })),
-      },
+      ],
     });
   }
 
