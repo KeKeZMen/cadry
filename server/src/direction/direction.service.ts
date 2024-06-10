@@ -8,7 +8,11 @@ export class DirectionService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   create(createDirectionDto: CreateDirectionDto) {
-    return 'This action adds a new direction';
+    return this.databaseService.direction.create({
+      data: {
+        ...createDirectionDto,
+      },
+    });
   }
 
   findOneById(id: number) {
@@ -24,10 +28,24 @@ export class DirectionService {
   }
 
   update(id: number, updateDirectionDto: UpdateDirectionDto) {
-    return `This action updates a #${id} direction`;
+    return this.databaseService.direction.update({
+      where: {
+        id,
+      },
+      data: {
+        ...updateDirectionDto,
+      },
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} direction`;
+    return this.databaseService.direction.delete({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+      },
+    });
   }
 }

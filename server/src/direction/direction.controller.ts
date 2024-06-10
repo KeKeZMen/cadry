@@ -6,35 +6,40 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { DirectionService } from './direction.service';
 import { CreateDirectionDto } from './dto/create-direction.dto';
 import { UpdateDirectionDto } from './dto/update-direction.dto';
+import { RolesGuard } from '@auth/guards/roles.guards';
+import { Roles } from '@shared/decorators';
 
+@Roles('Admin')
+@UseGuards(RolesGuard)
 @Controller('direction')
 export class DirectionController {
   constructor(private readonly directionService: DirectionService) {}
 
   @Post()
-  create(@Body() createDirectionDto: CreateDirectionDto) {
-    return this.directionService.create(createDirectionDto);
+  async create(@Body() createDirectionDto: CreateDirectionDto) {
+    return await this.directionService.create(createDirectionDto);
   }
 
   @Get()
-  findAll() {
-    return this.directionService.findAll();
+  async findAll() {
+    return await this.directionService.findAll();
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateDirectionDto: UpdateDirectionDto,
   ) {
-    return this.directionService.update(+id, updateDirectionDto);
+    return await this.directionService.update(+id, updateDirectionDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.directionService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.directionService.remove(+id);
   }
 }
