@@ -112,7 +112,7 @@ model Organization {
   logoUrl     String?          @map("logo_url")
   type        OrganizationType
 
-  user                         User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  user                         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   educationOrganizationRequest Request[] @relation("education")
   workOrganizationRequests     Request[] @relation("work")
   students                     Student[]
