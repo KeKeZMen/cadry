@@ -36,6 +36,13 @@ export class SpecialityService {
     });
   }
 
+  findOneById(id: number) {
+    return this.databaseService.speciality.findFirst({
+      where: {
+        id,
+      },
+    });
+  }
   findOneByName(name: string) {
     return this.databaseService.speciality.findFirst({
       where: {
