@@ -6,11 +6,17 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { SpecialityService } from './speciality.service';
 import { CreateSpecialityDto } from './dto/create-speciality.dto';
 import { UpdateSpecialityDto } from './dto/update-speciality.dto';
+import { RolesGuard } from '@auth/guards/roles.guards';
+import { Roles } from '@shared/decorators';
+import { AddWorkProfessionDto } from './dto/add-work-profession.dto';
 
+@Roles('Admin')
+@UseGuards(RolesGuard)
 @Controller('speciality')
 export class SpecialityController {
   constructor(private readonly specialityService: SpecialityService) {}
@@ -18,6 +24,14 @@ export class SpecialityController {
   @Post()
   create(@Body() createSpecialityDto: CreateSpecialityDto) {
     return this.specialityService.create(createSpecialityDto);
+  }
+
+  @Post(':id')
+  addWorkProfession(
+    @Param('id') id: string,
+    @Body() addWorkProfessionDto: AddWorkProfessionDto,
+  ) {
+    return this.specialityService.addWorkProfession(+id, addWorkProfessionDto);
   }
 
   @Get('direction/:directionId')

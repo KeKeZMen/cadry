@@ -7,5 +7,6 @@ import { DatabaseModule } from '@database/database.module';
   controllers: [SpecialityController],
   providers: [SpecialityService],
   imports: [DatabaseModule],
+  exports: [SpecialityService],
 })
 export class SpecialityModule {}
