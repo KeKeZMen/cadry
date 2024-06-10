@@ -31,7 +31,7 @@ export class AuthService {
       throw new ConflictException('Организация с таким email уже существует');
     }
 
-    const innCandidate = await this.organizationService.findOneByIdOrInn(
+    const innCandidate = await this.organizationService.findOneByUserIdOrInn(
       registerDto.inn,
     );
 
