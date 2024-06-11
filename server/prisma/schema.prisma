@@ -49,7 +49,7 @@ model Student {
   educationOrganizationId String   @map("education_organization_id")
   favoritesOrganizations  String[] @map("favorites_organizations")
   subProfessions          Int[]    @map("sub_professions")
-  specialityId            Int      @map("speciality_id")
+  professionId            Int      @map("speciality_id")
   isActive                Boolean  @default(false) @map("is_active")
   gpa                     Float    @db.DoublePrecision()
   socialAdaptability      Int      @map("social_adaptability")
@@ -57,9 +57,9 @@ model Student {
   gender     Gender
   disability DisabilitiesTypes?
 
-  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  educationOrganization Organization @relation(fields: [educationOrganizationId], references: [id])
-  speciality            Speciality   @relation(fields: [specialityId], references: [id])
+  user                  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  educationOrganization Organization   @relation(fields: [educationOrganizationId], references: [id])
+  workProfession        WorkProfession @relation(fields: [professionId], references: [id])
 
   @@map("students")
 }
@@ -154,7 +154,6 @@ model Speciality {
   directionId Int    @map("direction_id")
 
   direction Direction @relation(fields: [directionId], references: [id])
-  students  Student[]
   requests  Request[]
 
   workProfession WorkProfessionToSpeciality[]
@@ -180,6 +179,7 @@ model WorkProfession {
   name String
 
   requests     Request[]
+  students     Student[]
   specialities WorkProfessionToSpeciality[]
 
   @@index([id])
