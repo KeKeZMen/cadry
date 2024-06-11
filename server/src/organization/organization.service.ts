@@ -97,10 +97,9 @@ export class OrganizationService {
       'Основная профессия',
     ]);
 
-    for (let i = 11; i <= 14; i++) {
-      for (let j = 5; j <= 40; j++) {
-        const cell = templateWorksheet.getCell(j, i);
-        cell.dataValidation = {
+    for (let j = 5; j <= 40; j++) {
+      for (let i = 11; i <= 14; i++) {
+        templateWorksheet.getCell(j, i).dataValidation = {
           type: 'list',
           promptTitle: 'Выберите значение',
           prompt: 'Выберите значение из списка',
@@ -109,6 +108,15 @@ export class OrganizationService {
           showErrorMessage: true,
         };
       }
+
+      templateWorksheet.getCell(j, 5).dataValidation = {
+        type: 'list',
+        promptTitle: 'Выберите значение',
+        prompt: 'Выберите значение из списка',
+        allowBlank: false,
+        formulae: ['"М, Ж"'],
+        showErrorMessage: true,
+      };
     }
 
     await workbook.xlsx.writeFile(tmpPath);

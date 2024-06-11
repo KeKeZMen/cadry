@@ -3,7 +3,6 @@ import { StudentService } from './student.service';
 import { StudentController } from './student.controller';
 import { UserModule } from '@user/user.module';
 import { OrganizationModule } from '@organization/organization.module';
-import { SpecialityModule } from '@speciality/speciality.module';
 import { WorkProfessionModule } from '@work-profession/work-profession.module';
 import { DatabaseModule } from '@database/database.module';
 import { IsActiveGuard } from './guards/IsActive.guard';
@@ -15,7 +14,6 @@ import { IsActiveGuard } from './guards/IsActive.guard';
     DatabaseModule,
     UserModule,
     OrganizationModule,
-    SpecialityModule,
     WorkProfessionModule,
   ],
   exports: [StudentService],
