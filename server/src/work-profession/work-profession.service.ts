@@ -23,6 +23,14 @@ export class WorkProfessionService {
     });
   }
 
+  findOneByName(name: string) {
+    return this.databaseService.workProfession.findFirst({
+      where: {
+        name,
+      },
+    });
+  }
+
   findMany() {
     return this.databaseService.workProfession.findMany();
   }
