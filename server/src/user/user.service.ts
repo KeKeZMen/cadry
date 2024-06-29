@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { genSaltSync, hashSync } from 'bcrypt';
+import { genSaltSync, hashSync } from 'bcryptjs';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { DatabaseService } from '@database/database.service';
 

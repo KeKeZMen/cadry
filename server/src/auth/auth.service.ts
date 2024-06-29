@@ -7,11 +7,11 @@ import { UserService } from '@user/user.service';
 import { OrganizationService } from '@organization/organization.service';
 import { RegisterDto } from './dto';
 import { LoginDto } from './dto/login.dto';
-import { compareSync } from 'bcrypt';
 import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { DatabaseService } from '@database/database.service';
 import { randomUUID } from 'crypto';
+import { compareSync } from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
