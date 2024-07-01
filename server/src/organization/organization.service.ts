@@ -73,7 +73,10 @@ export class OrganizationService {
 
     const dataWorksheet = workbook.addWorksheet('Данные');
     professions.forEach((profession) => {
-      dataWorksheet.addRow([profession.workProfession.name]);
+      dataWorksheet.addRow([
+        profession.workProfession.name,
+        profession.workProfession.category,
+      ]);
     });
 
     const templateWorksheet = workbook.addWorksheet('Шаблон');
@@ -92,21 +95,57 @@ export class OrganizationService {
       'Средний балл по аттестату(5-бальная шкала)',
       'Социальная адаптированность(100-бальная шкала)',
       'Доп. профессия 1',
+      'Категория',
       'Доп. профессия 2',
+      'Категория',
       'Доп. профессия 3',
+      'Категория',
       'Основная профессия',
     ]);
 
     for (let j = 5; j <= 40; j++) {
-      for (let i = 11; i <= 14; i++) {
-        templateWorksheet.getCell(j, i).dataValidation = {
-          type: 'list',
-          promptTitle: 'Выберите значение',
-          prompt: 'Выберите значение из списка',
-          allowBlank: true,
-          formulae: [`=Данные!$A:$A`],
-          showErrorMessage: true,
-        };
+      for (let i = 11; i <= 17; i++) {
+        if (i % 2 !== 0) {
+          templateWorksheet.getCell(j, i).dataValidation = {
+            type: 'list',
+            promptTitle: 'Выберите значение',
+            prompt: 'Выберите значение из списка',
+            allowBlank: true,
+            formulae: [`=Данные!$A:$A`],
+            showErrorMessage: true,
+          };
+        }
+
+        // min: =ЗНАЧЕН(ПСТР(ВПР(A13;Данные!A:B;2);1;ПОИСК("-";ВПР(A13;Данные!A:B;2))-1))
+        // max: =ЗНАЧЕН(ПСТР(ВПР(A13;Данные!A:B;2);ПОИСК("-";ВПР(A13;Данные!A:B;2))+1;ДЛСТР(ВПР(A13;Данные!A:B;2))-ПОИСК("-";ВПР(A13;Данные!A:B;2))))
+
+        if (i % 2 == 0) {
+          const prevCell = templateWorksheet.getCell(j, i - 1).address;
+          const minFormula =
+            '=ЗНАЧЕН(ПСТР(ВПР(' +
+            prevCell +
+            ',Данные!A:B,2),1,ПОИСК("-",ВПР(' +
+            prevCell +
+            ',Данные!A:B,2))-1))';
+
+          const maxFormula =
+            '=ЗНАЧЕН(ПСТР(ВПР(' +
+            prevCell +
+            ',Данные!A:B,2),ПОИСК("-",ВПР(' +
+            prevCell +
+            ',Данные!A:B,2))+1,ДЛСТР(ВПР(' +
+            prevCell +
+            ',Данные!A:B,2))-ПОИСК("-",ВПР(' +
+            prevCell +
+            ',Данные!A:B,2))))';
+
+          templateWorksheet.getCell(j, i).dataValidation = {
+            type: 'whole',
+            operator: 'between',
+            showErrorMessage: true,
+            formulae: [minFormula, maxFormula],
+          };
+        }
       }
 
       templateWorksheet.getCell(j, 5).dataValidation = {
