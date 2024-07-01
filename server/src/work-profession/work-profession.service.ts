@@ -11,6 +11,7 @@ export class WorkProfessionService {
     return this.databaseService.workProfession.create({
       data: {
         name: createWorkProfessionDto.name,
+        category: createWorkProfessionDto.category,
       },
     });
   }

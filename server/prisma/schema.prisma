@@ -175,8 +175,9 @@ model WorkProfessionToSpeciality {
 }
 
 model WorkProfession {
-  id   Int    @id @default(autoincrement())
-  name String
+  id       Int    @id @default(autoincrement())
+  name     String
+  category String
 
   requests     Request[]
   students     Student[]
