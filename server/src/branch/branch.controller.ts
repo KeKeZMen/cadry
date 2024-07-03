@@ -17,6 +17,8 @@ import { CurrentUser, Public, Roles } from '@shared/decorators';
 import { UserService } from '@user/user.service';
 import { RolesGuard } from '@auth/guards/roles.guards';
 
+@Roles('Employee', 'Organization', 'Admin')
+@UseGuards(RolesGuard)
 @Controller('branch')
 export class BranchController {
   constructor(
@@ -24,8 +26,6 @@ export class BranchController {
     private readonly userService: UserService,
   ) {}
 
-  @Roles('Employee', 'Organization', 'Admin')
-  @UseGuards(RolesGuard)
   @Post(':organizationId')
   async create(
     @Param('organizationId', ParseUUIDPipe) organizationId: string,
@@ -56,8 +56,6 @@ export class BranchController {
     return await this.branchService.findManyByOrganizationId(organizationId);
   }
 
-  @Roles('Employee', 'Organization', 'Admin')
-  @UseGuards(RolesGuard)
   @Patch(':branchId')
   async update(
     @Param('branchId') branchId: string,
@@ -82,8 +80,6 @@ export class BranchController {
     return await this.branchService.update(branchId, updateBranchDto);
   }
 
-  @Roles('Employee', 'Organization', 'Admin')
-  @UseGuards(RolesGuard)
   @Delete(':branchId')
   async remove(
     @Param('branchId') branchId: string,

@@ -17,7 +17,7 @@ import { UserService } from '@user/user.service';
 import { BranchService } from '@branch/branch.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 
-@Roles('Organization', "Admin")
+@Roles('Organization', 'Admin')
 @UseGuards(RolesGuard)
 @Controller('employee')
 export class EmployeeController {
