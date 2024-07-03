@@ -39,17 +39,20 @@ export class OrganizationController {
   @UseGuards(RolesGuard)
   @Patch(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseUUIDPipe) organizationId: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto,
     @CurrentUser() currentUser: IJwtPayload,
   ) {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
-    if (user.organization.id !== id && user.role !== 'Admin') {
+    if (user.organization.id !== organizationId && user.role !== 'Admin') {
       throw new UnauthorizedException();
-    }
+    }    
 
-    return await this.organizationService.update(id, updateOrganizationDto);
+    return await this.organizationService.update(
+      organizationId,
+      updateOrganizationDto,
+    );
   }
 
   @Roles('Admin')
