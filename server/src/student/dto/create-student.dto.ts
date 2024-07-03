@@ -1,5 +1,9 @@
 import { Gender } from '@prisma/client';
 
+type SubProfessionType = {
+  id: string;
+  category: string;
+};
 export class CreateStudentDto {
   userId: string;
   firstName: string;
@@ -14,5 +18,5 @@ export class CreateStudentDto {
   professionId: number;
   gpa: number;
   socialAdaptability: number;
-  subProfession: number[];
+  subProfessions: SubProfessionType[];
 }
