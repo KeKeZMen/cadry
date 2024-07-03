@@ -8,21 +8,40 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { RolesGuard } from '@auth/guards/roles.guards';
-import { Public, Roles } from '@shared/decorators';
+import { CurrentUser, Public, Roles } from '@shared/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UserService } from '@user/user.service';
 
-@Roles("Employee", "Admin")
+@Roles('Employee', 'Admin')
 @UseGuards(RolesGuard)
 @Controller('student')
 export class StudentController {
-  constructor(private readonly studentService: StudentService) {}
+  constructor(
+    private readonly studentService: StudentService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post()
-  async create(@Body() createStudentDto: CreateStudentDto) {
+  async create(
+    @Body() createStudentDto: CreateStudentDto,
+    @CurrentUser() currentUser: IJwtPayload,
+  ) {
+    const user = await this.userService.findOneByIdOrEmail(currentUser.id);
+
+    const canCreate =
+      (user.employee.employeeType === 'Graduates' &&
+        createStudentDto.educationOrganizationId === user.organization.id) ||
+      user.role === 'Admin';
+
+    if (!canCreate) {
+      throw new UnauthorizedException();
+    }
+
     return await this.studentService.create(createStudentDto);
   }
 
@@ -43,10 +62,21 @@ export class StudentController {
     return await this.studentService.activateStudent(userId);
   }
 
-  @Roles("Employee")
   @UseGuards(RolesGuard)
   @Delete(':userId')
-  async remove(@Param('userId') userId: string) {
+  async remove(
+    @Param('userId') userId: string,
+    @CurrentUser() currentUser: IJwtPayload,
+  ) {
+    const user = await this.userService.findOneByIdOrEmail(currentUser.id);
+
+    const canDelete =
+      user.employee.employeeType === 'Graduates' || user.role === 'Admin';
+
+    if (!canDelete) {
+      throw new UnauthorizedException();
+    }
+
     return await this.studentService.remove(userId);
   }
 }

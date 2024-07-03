@@ -90,26 +90,28 @@ export class StudentService {
         password,
       });
 
-      const subProfessions = []
+      const subProfessions = [];
 
       for (let i = 11; i <= 15; i++) {
-        if(i % 2 !== 0) {
+        if (i % 2 !== 0) {
           const subProfessionName = worksheet.getCell(j, i).value?.toString();
-          if(!subProfessionName) continue
-          const subProfessionCategory = worksheet.getCell(j, i + 1).value?.toString()
+          if (!subProfessionName) continue;
+          const subProfessionCategory = worksheet
+            .getCell(j, i + 1)
+            .value?.toString();
 
-          professions.map(profession => {
-            if(profession.name === subProfessionName) {
+          professions.map((profession) => {
+            if (profession.name === subProfessionName) {
               subProfessions.push({
                 id: profession.id,
                 category: subProfessionCategory,
               });
             }
-          })
+          });
         }
       }
 
-      const birthDate = worksheet.getCell(j, 4).value as Date
+      const birthDate = worksheet.getCell(j, 4).value as Date;
 
       await this.create({
         userId: user.id,
@@ -127,7 +129,7 @@ export class StudentService {
           (profession) =>
             profession.name === worksheet.getCell(j, 17).value.toString(),
         ).id,
-        subProfessions
+        subProfessions,
       });
     }
 
