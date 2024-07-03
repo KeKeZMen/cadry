@@ -12,7 +12,7 @@ import { DirectionService } from './direction.service';
 import { CreateDirectionDto } from './dto/create-direction.dto';
 import { UpdateDirectionDto } from './dto/update-direction.dto';
 import { RolesGuard } from '@auth/guards/roles.guards';
-import { Roles } from '@shared/decorators';
+import { Public, Roles } from '@shared/decorators';
 
 @Roles('Admin')
 @UseGuards(RolesGuard)
@@ -25,6 +25,7 @@ export class DirectionController {
     return await this.directionService.create(createDirectionDto);
   }
 
+  @Public()
   @Get()
   async findAll() {
     return await this.directionService.findAll();

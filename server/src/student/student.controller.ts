@@ -15,6 +15,8 @@ import { RolesGuard } from '@auth/guards/roles.guards';
 import { Public, Roles } from '@shared/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 
+@Roles("Employee", "Admin")
+@UseGuards(RolesGuard)
 @Controller('student')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
@@ -41,8 +43,8 @@ export class StudentController {
     return await this.studentService.activateStudent(userId);
   }
 
+  @Roles("Employee")
   @UseGuards(RolesGuard)
-  @Roles('Admin')
   @Delete(':userId')
   async remove(@Param('userId') userId: string) {
     return await this.studentService.remove(userId);

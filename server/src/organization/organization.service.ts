@@ -38,6 +38,10 @@ export class OrganizationService {
     });
   }
 
+  findMany() {
+    return this.databaseService.organization.findMany();
+  }
+
   findOneByIdOrInn(idOrInn: string) {
     return this.databaseService.organization.findFirst({
       where: {
@@ -105,12 +109,12 @@ export class OrganizationService {
 
     for (let j = 5; j <= 40; j++) {
       templateWorksheet.getCell(j, 9).dataValidation = {
-        type: "decimal",
+        type: 'decimal',
         formulae: [1, 5],
         showErrorMessage: true,
-        errorTitle: "Неверно введен средний балл по аттестату",
-        error: "Введите значение от 1 до 5"
-      }
+        errorTitle: 'Неверно введен средний балл по аттестату',
+        error: 'Введите значение от 1 до 5',
+      };
 
       templateWorksheet.getCell(j, 10).dataValidation = {
         type: 'whole',

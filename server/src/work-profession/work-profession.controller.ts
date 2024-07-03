@@ -12,7 +12,7 @@ import { CreateWorkProfessionDto } from './dto/create-work-profession.dto';
 import { UpdateWorkProfessionDto } from './dto/update-work-profession.dto';
 import { WorkProfessionService } from './work-profession.service';
 import { RolesGuard } from '@auth/guards/roles.guards';
-import { Roles } from '@shared/decorators';
+import { Public, Roles } from '@shared/decorators';
 
 @Roles('Admin')
 @UseGuards(RolesGuard)
@@ -25,6 +25,7 @@ export class WorkProfessionController {
     return await this.workProfessionService.create(createProfessionDto);
   }
 
+  @Public()
   @Get()
   async getAll() {
     return await this.workProfessionService.findMany();

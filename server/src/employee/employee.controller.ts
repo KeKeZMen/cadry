@@ -17,7 +17,7 @@ import { UserService } from '@user/user.service';
 import { BranchService } from '@branch/branch.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 
-@Roles('Admin', 'Organization')
+@Roles('Organization', "Admin")
 @UseGuards(RolesGuard)
 @Controller('employee')
 export class EmployeeController {
@@ -80,7 +80,11 @@ export class EmployeeController {
     );
 
     const canEdit =
-      user.organization.id === organization.id || user.role === 'Admin';
+      (user.role === 'Organization' &&
+        user.organization.id === organization.id) ||
+      (user.employee.employeeType === 'Manager' &&
+        user.organization.id === organization.id) ||
+      user.role === 'Admin';
 
     if (!canEdit) {
       throw new UnauthorizedException();

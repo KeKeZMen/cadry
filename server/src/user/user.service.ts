@@ -47,20 +47,6 @@ export class UserService {
     });
   }
 
-  findUsersByEmail(email: string) {
-    return this.database.user.findMany({
-      where: {
-        email: {
-          contains: email,
-        },
-      },
-      select: {
-        email: true,
-        role: true,
-      },
-    });
-  }
-
   update(id: string, updateUserDto: UpdateUserDto) {
     const hashedPassword = this.hashPassword(updateUserDto.password);
 

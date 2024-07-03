@@ -7,19 +7,16 @@ import {
   ParseUUIDPipe,
   Patch,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto';
-import { CurrentUser } from '@shared/decorators';
+import { CurrentUser, Roles } from '@shared/decorators';
+import { RolesGuard } from '@auth/guards/roles.guards';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  @Get(':email')
-  async findUsersByEmail(@Param('email') email: string) {
-    return await this.userService.findUsersByEmail(email);
-  }
 
   @Patch(':id')
   async update(
@@ -38,15 +35,10 @@ export class UserController {
     return await this.userService.update(id, updateUserDto);
   }
 
+  @Roles('Admin')
+  @UseGuards(RolesGuard)
   @Delete(':id')
-  async delete(
-    @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() currentUser: IJwtPayload,
-  ) {
-    if (currentUser.role !== 'Admin') {
-      throw new UnauthorizedException();
-    }
-
+  async delete(@Param('id', ParseUUIDPipe) id: string) {
     return await this.userService.delete(id);
   }
 }

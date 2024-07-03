@@ -35,7 +35,12 @@ export class OrganizationController {
     return await this.organizationService.create(createOrganizationDto);
   }
 
-  @Roles('Admin', 'Organization')
+  @Public()
+  async getAll() {
+    return await this.organizationService.findMany();
+  }
+
+  @Roles('Organization', 'Admin')
   @UseGuards(RolesGuard)
   @Patch(':id')
   async update(
@@ -45,9 +50,16 @@ export class OrganizationController {
   ) {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
-    if (user.organization.id !== organizationId && user.role !== 'Admin') {
+    const canUpdate =
+      (user.role === 'Organization' &&
+        user.organization.id === organizationId) ||
+      (user.employee.employeeType === 'Manager' &&
+        user.organization.id === organizationId) ||
+      user.role === 'Admin';
+
+    if (canUpdate) {
       throw new UnauthorizedException();
-    }    
+    }
 
     return await this.organizationService.update(
       organizationId,
@@ -70,19 +82,32 @@ export class OrganizationController {
     return await this.organizationService.remove(id);
   }
 
-  // @Roles('Employee', 'Admin')
-  // @UseGuards(RolesGuard)
+  @Roles('Employee', 'Organization', 'Admin')
+  @UseGuards(RolesGuard)
   @Header(
     'Content-Type',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   )
-  @Public()
   @Get('template/:organizationId/:specialityId')
   async getDocumentTemplate(
     @Param('organizationId') organizationId: string,
     @Param('specialityId') specialityId: string,
+    @CurrentUser() currentUser: IJwtPayload,
     @Res() res: Response,
   ) {
+    const user = await this.userService.findOneByIdOrEmail(currentUser.id);
+
+    const canGet =
+      (user.employee.employeeType === 'Graduates' &&
+        user.organization.id === organizationId) ||
+      (user.role === 'Organization' &&
+        user.organization.id === organizationId) ||
+      user.role === 'Admin';
+
+    if (!canGet) {
+      throw new UnauthorizedException();
+    }
+
     const fileStream = await this.organizationService.getTemplateStream(
       +specialityId,
       organizationId,

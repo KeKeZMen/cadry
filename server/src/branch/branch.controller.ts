@@ -24,6 +24,8 @@ export class BranchController {
     private readonly userService: UserService,
   ) {}
 
+  @Roles('Employee', 'Organization', 'Admin')
+  @UseGuards(RolesGuard)
   @Post(':organizationId')
   async create(
     @Param('organizationId', ParseUUIDPipe) organizationId: string,
@@ -34,7 +36,9 @@ export class BranchController {
 
     const canCreate =
       (user.organization.id === organizationId &&
-        user.role === 'Organization') ||
+        user.employee.employeeType === 'Manager') ||
+      (user.role === 'Organization' &&
+        organizationId === user.organization.id) ||
       user.role === 'Admin';
 
     if (!canCreate) {
@@ -52,6 +56,8 @@ export class BranchController {
     return await this.branchService.findManyByOrganizationId(organizationId);
   }
 
+  @Roles('Employee', 'Organization', 'Admin')
+  @UseGuards(RolesGuard)
   @Patch(':branchId')
   async update(
     @Param('branchId') branchId: string,
@@ -59,20 +65,24 @@ export class BranchController {
     @CurrentUser() currentUser: IJwtPayload,
   ) {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
+    const organization =
+      await this.branchService.getOrganizationIdByBranch(branchId);
 
-    const canCreate =
+    const canUpdate =
       (user.employee.branchId === branchId &&
         user.employee.employeeType === 'Manager') ||
+      (user.role === 'Organization' &&
+        organization.id === user.organization.id) ||
       user.role === 'Admin';
 
-    if (!canCreate) {
+    if (!canUpdate) {
       throw new UnauthorizedException();
     }
 
     return await this.branchService.update(branchId, updateBranchDto);
   }
 
-  @Roles('Admin', 'Employee', 'Organization')
+  @Roles('Employee', 'Organization', 'Admin')
   @UseGuards(RolesGuard)
   @Delete(':branchId')
   async remove(
@@ -86,9 +96,9 @@ export class BranchController {
     const canDelete =
       (user.employee.branchId === branchId &&
         user.employee.employeeType === 'Manager') ||
-      user.role === 'Admin' ||
       (user.role === 'Organization' &&
-        user.organization.id === organization.id);
+        user.organization.id === organization.id) ||
+      user.role === 'Admin';
 
     if (!canDelete) {
       throw new UnauthorizedException();

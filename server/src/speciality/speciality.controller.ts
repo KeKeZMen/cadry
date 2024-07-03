@@ -12,7 +12,7 @@ import { SpecialityService } from './speciality.service';
 import { CreateSpecialityDto } from './dto/create-speciality.dto';
 import { UpdateSpecialityDto } from './dto/update-speciality.dto';
 import { RolesGuard } from '@auth/guards/roles.guards';
-import { Roles } from '@shared/decorators';
+import { Public, Roles } from '@shared/decorators';
 import { AddWorkProfessionDto } from './dto/add-work-profession.dto';
 
 @Roles('Admin')
@@ -34,6 +34,7 @@ export class SpecialityController {
     return this.specialityService.addWorkProfession(+id, addWorkProfessionDto);
   }
 
+  @Public()
   @Get('direction/:directionId')
   findAll(@Param('directionId') directionId: number) {
     return this.specialityService.findAllByDirectionId(directionId);
