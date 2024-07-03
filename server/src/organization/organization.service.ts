@@ -63,7 +63,7 @@ export class OrganizationService {
   }
 
   async getTemplateStream(specialityId: number, organizationId: string) {
-    const organization = await this.findOneByIdOrInn(organizationId);
+    const organization = await this.findOneByIdOrInn(organizationId);    
     const speciality = await this.specialityService.findOneById(specialityId);
     const professions =
       await this.workProfessionService.findManyBySpecialityId(specialityId);
@@ -116,32 +116,35 @@ export class OrganizationService {
           };
         }
 
-        // min: =ЗНАЧЕН(ПСТР(ВПР(A13;Данные!A:B;2);1;ПОИСК("-";ВПР(A13;Данные!A:B;2))-1))
-        // max: =ЗНАЧЕН(ПСТР(ВПР(A13;Данные!A:B;2);ПОИСК("-";ВПР(A13;Данные!A:B;2))+1;ДЛСТР(ВПР(A13;Данные!A:B;2))-ПОИСК("-";ВПР(A13;Данные!A:B;2))))
+        // min: =VALUE(MID(VLOOKUP(A13;Данные!A:B;2);1;SEARCH("-";VLOOKUP(A13;Данные!A:B;2))-1))
+        // max: =VALUE(MID(VLOOKUP(A13;Данные!A:B;2);SEARCH("-";VLOOKUP(A13;Данные!A:B;2))+1;LEN(VLOOKUP(A13;Данные!A:B;2))-SEARCH("-";VLOOKUP(A13;Данные!A:B;2))))
 
         if (i % 2 == 0) {
           const prevCell = templateWorksheet.getCell(j, i - 1).address;
           const minFormula =
-            '=ЗНАЧЕН(ПСТР(ВПР(' +
+            '=VALUE(MID(VLOOKUP(' +
             prevCell +
-            ',Данные!A:B,2),1,ПОИСК("-",ВПР(' +
+            ',Данные!A:B,2),1,SEARCH("-",VLOOKUP(' +
             prevCell +
             ',Данные!A:B,2))-1))';
 
           const maxFormula =
-            '=ЗНАЧЕН(ПСТР(ВПР(' +
+            '=VALUE(MID(VLOOKUP(' +
             prevCell +
-            ',Данные!A:B,2),ПОИСК("-",ВПР(' +
+            ',Данные!A:B,2),SEARCH("-",VLOOKUP(' +
             prevCell +
-            ',Данные!A:B,2))+1,ДЛСТР(ВПР(' +
+            ',Данные!A:B,2))+1,LEN(VLOOKUP(' +
             prevCell +
-            ',Данные!A:B,2))-ПОИСК("-",ВПР(' +
+            ',Данные!A:B,2))-SEARCH("-",VLOOKUP(' +
             prevCell +
             ',Данные!A:B,2))))';
 
           templateWorksheet.getCell(j, i).dataValidation = {
             type: 'whole',
             operator: 'between',
+            errorTitle: 'Неверно выбрана категория',
+            error:
+              'Выберите категорию из указанного для специальности диапазона',
             showErrorMessage: true,
             formulae: [minFormula, maxFormula],
           };
