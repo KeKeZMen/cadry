@@ -32,7 +32,7 @@ export class StudentService {
         userId: createStudentDto.userId,
         gpa: createStudentDto.gpa,
         socialAdaptability: createStudentDto.socialAdaptability,
-        subProfessions: createStudentDto.subProfession,
+        subProfessions: createStudentDto.subProfessions,
         professionId: createStudentDto.professionId,
       },
     });
@@ -54,6 +54,8 @@ export class StudentService {
 
     const educationOrganization =
       await this.organizationService.findOneByName(organizationName);
+    const professions = await this.workProfessionService.findMany();
+    
 
     for (let j = 5; j <= worksheet.actualRowCount; j++) {
       const email = worksheet.getCell(j, 7).value as {
@@ -86,18 +88,28 @@ export class StudentService {
         lastName: user.lastName,
         email: user.email,
         password,
-        id: user.id,
       });
 
-      const subProfession = [
-        worksheet.getCell(j, 11).value?.toString(),
-        worksheet.getCell(j, 12).value?.toString(),
-        worksheet.getCell(j, 13).value?.toString(),
-      ].filter(Boolean);
+      const subProfessions = []
+
+      for (let i = 11; i <= 15; i++) {
+        if(i % 2 !== 0) {
+          const subProfessionName = worksheet.getCell(j, i).value?.toString();
+          if(!subProfessionName) continue
+          const subProfessionCategory = worksheet.getCell(j, i + 1).value?.toString()
+
+          professions.map(profession => {
+            if(profession.name === subProfessionName) {
+              subProfessions.push({
+                id: profession.id,
+                category: subProfessionCategory,
+              });
+            }
+          })
+        }
+      }
 
       const birthDate = worksheet.getCell(j, 4).value as Date
-
-      const professions = await this.workProfessionService.findMany();
 
       await this.create({
         userId: user.id,
@@ -113,11 +125,9 @@ export class StudentService {
         educationOrganizationId: educationOrganization.id,
         professionId: professions.find(
           (profession) =>
-            profession.name === worksheet.getCell(j, 14).value.toString(),
+            profession.name === worksheet.getCell(j, 17).value.toString(),
         ).id,
-        subProfession: professions.map((profession) => {
-          if (subProfession.includes(profession.name)) return profession.id;
-        }).filter(Boolean),
+        subProfessions
       });
     }
 
