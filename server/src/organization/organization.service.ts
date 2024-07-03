@@ -63,7 +63,7 @@ export class OrganizationService {
   }
 
   async getTemplateStream(specialityId: number, organizationId: string) {
-    const organization = await this.findOneByIdOrInn(organizationId);    
+    const organization = await this.findOneByIdOrInn(organizationId);
     const speciality = await this.specialityService.findOneById(specialityId);
     const professions =
       await this.workProfessionService.findManyBySpecialityId(specialityId);
@@ -104,6 +104,31 @@ export class OrganizationService {
     ]);
 
     for (let j = 5; j <= 40; j++) {
+      templateWorksheet.getCell(j, 9).dataValidation = {
+        type: "decimal",
+        formulae: [1, 5],
+        showErrorMessage: true,
+        errorTitle: "Неверно введен средний балл по аттестату",
+        error: "Введите значение от 1 до 5"
+      }
+
+      templateWorksheet.getCell(j, 10).dataValidation = {
+        type: 'whole',
+        formulae: [1, 100],
+        showErrorMessage: true,
+        errorTitle: 'Неверно введен балл социальной адаптированности',
+        error: 'Введите значение от 1 до 100',
+      };
+
+      templateWorksheet.getCell(j, 5).dataValidation = {
+        type: 'list',
+        promptTitle: 'Выберите значение',
+        prompt: 'Выберите значение из списка',
+        allowBlank: false,
+        formulae: ['"М, Ж"'],
+        showErrorMessage: true,
+      };
+
       for (let i = 11; i <= 17; i++) {
         if (i % 2 !== 0) {
           templateWorksheet.getCell(j, i).dataValidation = {
@@ -150,15 +175,6 @@ export class OrganizationService {
           };
         }
       }
-
-      templateWorksheet.getCell(j, 5).dataValidation = {
-        type: 'list',
-        promptTitle: 'Выберите значение',
-        prompt: 'Выберите значение из списка',
-        allowBlank: false,
-        formulae: ['"М, Ж"'],
-        showErrorMessage: true,
-      };
     }
 
     await workbook.xlsx.writeFile(tmpPath);
@@ -166,10 +182,10 @@ export class OrganizationService {
     return createReadStream(tmpPath);
   }
 
-  update(userId: string, updateOrganizationDto: UpdateOrganizationDto) {
+  update(organizationId: string, updateOrganizationDto: UpdateOrganizationDto) {
     return this.databaseService.organization.update({
       where: {
-        userId,
+        id: organizationId,
       },
       data: {
         ...updateOrganizationDto,
