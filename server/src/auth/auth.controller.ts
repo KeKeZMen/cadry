@@ -9,37 +9,37 @@ import {
   Res,
   UnauthorizedException,
   UseInterceptors,
-} from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { Cookie, Public, UserAgent } from '@libs/decorators';
-import { RegisterDto } from './dto';
-import { LoginDto } from './dto/login.dto';
-import { Response } from 'express';
-import { Tokens } from './interfaces';
+} from "@nestjs/common";
+import { AuthService } from "./auth.service";
+import { Cookie, Public, UserAgent } from "@libs/decorators";
+import { RegisterDto } from "./dto";
+import { LoginDto } from "./dto/login.dto";
+import { Response } from "express";
+import { Tokens } from "./interfaces";
 
-const REFRESH_TOKEN = 'refreshToken';
+const REFRESH_TOKEN = "refreshToken";
 
 @Public()
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Post('register-organization')
+  @Post("register-organization")
   async registerOrganization(@Body() registerDto: RegisterDto) {
     return await this.authService.registerOrganization(registerDto);
   }
 
-  @Post('login')
+  @Post("login")
   async login(
     @Body() loginDto: LoginDto,
     @Res() res: Response,
-    @UserAgent() userAgent: string,
+    @UserAgent() userAgent: string
   ) {
     const tokens = await this.authService.login(loginDto, userAgent);
 
     if (!tokens) {
-      throw new BadRequestException('Не удалось авторизоваться');
+      throw new BadRequestException("Не удалось авторизоваться");
     }
 
     this.setRefreshTokenToCookies(tokens, res);
@@ -47,19 +47,19 @@ export class AuthController {
     res.json({ accessToken: tokens.accessToken });
   }
 
-  @Get('refresh')
+  @Get("refresh")
   async refresh(
     @Cookie(REFRESH_TOKEN) refreshToken: string,
     @Res() res: Response,
-    @UserAgent() userAgent: string,
-  ) {    
+    @UserAgent() userAgent: string
+  ) {
     if (!refreshToken) {
       throw new UnauthorizedException();
     }
 
     const tokens = await this.authService.refreshTokens(
       refreshToken,
-      userAgent,
+      userAgent
     );
 
     if (!tokens) {
@@ -68,13 +68,13 @@ export class AuthController {
 
     this.setRefreshTokenToCookies(tokens, res);
 
-    res.json({ accessToken: tokens.accessToken })
+    res.json({ accessToken: tokens.accessToken });
   }
 
-  @Get('logout')
+  @Get("logout")
   async logout(
     @Cookie(REFRESH_TOKEN) refreshToken: string,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     if (!refreshToken) {
       res.sendStatus(HttpStatus.OK);
@@ -83,7 +83,7 @@ export class AuthController {
 
     await this.authService.deleteRefreshToken(refreshToken);
 
-    res.cookie(REFRESH_TOKEN, '', {
+    res.cookie(REFRESH_TOKEN, "", {
       httpOnly: true,
       secure: true,
       expires: new Date(),
@@ -99,7 +99,7 @@ export class AuthController {
 
     res.cookie(REFRESH_TOKEN, tokens.refreshToken.token, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: "lax",
       expires: new Date(tokens.refreshToken.exp),
     });
   }
