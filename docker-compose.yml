@@ -19,6 +19,8 @@ services:
       - 3000:3000
     container_name: nginx
   # rabbitmq:
-  #   image: rabbitmq:3.13-management-alpine
+  #   image: rabbitmq:management-alpine
+  #   container_name: rabbitmq
   #   ports:
+  #     - 15672:15672
   #     - 5672:5672
