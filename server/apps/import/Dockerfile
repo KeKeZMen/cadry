@@ -14,4 +14,4 @@ RUN npm run build
 
 RUN npm i -g pm2
 
-CMD ["pm2-runtime", "dist/src/main.js", "-i", "4"]
+CMD ["pm2-runtime", "dist/apps/import/main.js", "-i", "max"]
