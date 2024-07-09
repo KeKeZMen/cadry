@@ -1,6 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { ImportModule } from "./import.module";
 import { RmqService, IMPORT_QUEUE } from "@libs/rmq";
+import { RmqOptions } from "@nestjs/microservices";
 
 async function bootstrap() {
   const app = await NestFactory.create(ImportModule);
