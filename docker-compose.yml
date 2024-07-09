@@ -3,8 +3,6 @@ services:
     restart: always
     build:
       context: ./server
-    ports:
-      - 3001:3001
     container_name: backend
     env_file:
       - ./server/.env
@@ -16,7 +14,7 @@ services:
     build:
       context: ./nginx
     ports:
-      - 3000:3000
+      - 8080:80
     container_name: nginx
   # rabbitmq:
   #   image: rabbitmq:management-alpine

@@ -1,6 +1,6 @@
 FROM node:alpine
 
-WORKDIR /app
+WORKDIR /usr/app/src
 
 COPY ./package*.json ./
 
@@ -12,4 +12,6 @@ RUN npx prisma generate
 
 RUN npm run build
 
-CMD ["npm", "run", "start"]
+RUN npm i -g pm2
+
+CMD ["pm2-runtime", "dist/src/main.js", "-i", "4"]
