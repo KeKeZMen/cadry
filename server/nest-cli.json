@@ -41,7 +41,6 @@
       "entryFile": "main",
       "sourceRoot": "apps/cadry-server/src",
       "compilerOptions": {
-        "webpack": true,
         "tsConfigPath": "apps/cadry-server/tsconfig.app.json"
       }
     },
@@ -51,7 +50,6 @@
       "entryFile": "main",
       "sourceRoot": "apps/import/src",
       "compilerOptions": {
-        "webpack": true,
         "tsConfigPath": "apps/import/tsconfig.app.json"
       }
     }
