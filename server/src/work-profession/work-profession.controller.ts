@@ -12,7 +12,7 @@ import { CreateWorkProfessionDto } from './dto/create-work-profession.dto';
 import { UpdateWorkProfessionDto } from './dto/update-work-profession.dto';
 import { WorkProfessionService } from './work-profession.service';
 import { RolesGuard } from '@auth/guards/roles.guards';
-import { Public, Roles } from '@shared/decorators';
+import { Public, Roles } from '@libs/decorators';
 
 @Roles('Admin')
 @UseGuards(RolesGuard)

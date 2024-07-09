@@ -13,9 +13,9 @@ import {
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { RolesGuard } from '@auth/guards/roles.guards';
-import { CurrentUser, Public, Roles } from '@shared/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from '@user/user.service';
+import { CurrentUser, Public, Roles } from '@libs/decorators';
 
 @Roles('Employee', 'Admin')
 @UseGuards(RolesGuard)

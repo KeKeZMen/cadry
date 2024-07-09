@@ -8,8 +8,8 @@ import {
   CreateOrganizationUserDto,
 } from './dto';
 import { WorkProfessionService } from '@work-profession/work-profession.service';
-import { DatabaseService } from '@database/database.service';
 import { SpecialityService } from '@speciality/speciality.service';
+import { DatabaseService } from '@libs/database';
 
 @Injectable()
 export class OrganizationService {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '@database/database.service';
 import { CreateSpecialityDto } from './dto/create-speciality.dto';
 import { UpdateSpecialityDto } from './dto/update-speciality.dto';
 import { AddWorkProfessionDto } from './dto/add-work-profession.dto';
+import { DatabaseService } from '@libs/database';
 
 @Injectable()
 export class SpecialityService {

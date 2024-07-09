@@ -11,7 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Cookie, Public, UserAgent } from '@shared/decorators';
+import { Cookie, Public, UserAgent } from '@libs/decorators';
 import { RegisterDto } from './dto';
 import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';

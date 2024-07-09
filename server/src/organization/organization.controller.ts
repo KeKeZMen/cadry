@@ -16,10 +16,10 @@ import {
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
 import { BranchService } from '@branch/branch.service';
-import { CurrentUser, Public, Roles } from '@shared/decorators';
 import { UserService } from '@user/user.service';
 import { RolesGuard } from '@auth/guards/roles.guards';
 import { Response } from 'express';
+import { CurrentUser, Public, Roles } from '@libs/decorators';
 
 @Controller('organization')
 export class OrganizationController {

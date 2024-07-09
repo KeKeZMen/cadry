@@ -12,8 +12,8 @@ import { SpecialityService } from './speciality.service';
 import { CreateSpecialityDto } from './dto/create-speciality.dto';
 import { UpdateSpecialityDto } from './dto/update-speciality.dto';
 import { RolesGuard } from '@auth/guards/roles.guards';
-import { Public, Roles } from '@shared/decorators';
 import { AddWorkProfessionDto } from './dto/add-work-profession.dto';
+import { Public, Roles } from '@libs/decorators';
 
 @Roles('Admin')
 @UseGuards(RolesGuard)

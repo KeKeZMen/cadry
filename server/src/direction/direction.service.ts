@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateDirectionDto } from './dto/create-direction.dto';
 import { UpdateDirectionDto } from './dto/update-direction.dto';
-import { DatabaseService } from '@database/database.service';
+import { DatabaseService } from '@libs/database';
 
 @Injectable()
 export class DirectionService {

@@ -4,13 +4,13 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
-import { DatabaseService } from '@database/database.service';
 import { UserService } from '@user/user.service';
 import { OrganizationService } from '@organization/organization.service';
 import { WorkProfessionService } from '@work-profession/work-profession.service';
 import * as ExcelJs from 'exceljs';
 import * as tmp from 'tmp';
 import * as fs from 'fs/promises';
+import { DatabaseService } from '@libs/database';
 
 @Injectable()
 export class StudentService {
@@ -55,7 +55,6 @@ export class StudentService {
     const educationOrganization =
       await this.organizationService.findOneByName(organizationName);
     const professions = await this.workProfessionService.findMany();
-    
 
     for (let j = 5; j <= worksheet.actualRowCount; j++) {
       const email = worksheet.getCell(j, 7).value as {

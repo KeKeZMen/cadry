@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { DatabaseService } from '@database/database.service';
 import { UserService } from '@user/user.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { DatabaseService } from '@libs/database';
 
 @Injectable()
 export class EmployeeService {

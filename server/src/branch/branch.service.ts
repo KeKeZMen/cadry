@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBranchDto, UpdateBranchDto } from './dto';
-import { DatabaseService } from '@database/database.service';
+import { DatabaseService } from '@libs/database';
 
 @Injectable()
 export class BranchService {

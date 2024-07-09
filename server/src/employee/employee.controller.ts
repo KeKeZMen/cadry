@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { CurrentUser, Roles } from '@shared/decorators';
+import { CurrentUser, Roles } from '@libs/decorators';
 import { RolesGuard } from '@auth/guards/roles.guards';
 import { UserService } from '@user/user.service';
 import { BranchService } from '@branch/branch.service';

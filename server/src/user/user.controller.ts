@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto';
-import { CurrentUser, Roles } from '@shared/decorators';
 import { RolesGuard } from '@auth/guards/roles.guards';
+import { CurrentUser, Roles } from '@libs/decorators';
 
 @Controller('user')
 export class UserController {

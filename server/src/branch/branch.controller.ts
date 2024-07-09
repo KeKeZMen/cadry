@@ -13,7 +13,7 @@ import {
 import { BranchService } from './branch.service';
 import { CreateBranchDto } from './dto/create-branch.dto';
 import { UpdateBranchDto } from './dto/update-branch.dto';
-import { CurrentUser, Public, Roles } from '@shared/decorators';
+import { CurrentUser, Public, Roles } from '@libs/decorators';
 import { UserService } from '@user/user.service';
 import { RolesGuard } from '@auth/guards/roles.guards';
 

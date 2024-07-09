@@ -1,5 +1,4 @@
-import { IsINNValide } from '@shared/decorators/isINNValide';
-import { IsPasswordMatchingConstraint } from '@shared/decorators/isPasswordMatching';
+import { IsINNValide, IsPasswordMatchingConstraint } from '@libs/decorators';
 import {
   IsEmail,
   IsNotEmpty,

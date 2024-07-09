@@ -9,9 +9,9 @@ import { RegisterDto } from './dto';
 import { LoginDto } from './dto/login.dto';
 import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
-import { DatabaseService } from '@database/database.service';
 import { randomUUID } from 'crypto';
 import { compareSync } from 'bcryptjs';
+import { DatabaseService } from '@libs/database';
 
 @Injectable()
 export class AuthService {

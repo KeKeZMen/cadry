@@ -5,7 +5,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { TYPES_KEY } from '@shared/decorators/employee-type.decorator';
+import { TYPES_KEY } from '@libs/decorators';
 import { UserService } from '@user/user.service';
 import { Request } from 'express';
 import { Observable } from 'rxjs';

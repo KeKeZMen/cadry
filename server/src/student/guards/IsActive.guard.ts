@@ -1,3 +1,4 @@
+import { isPublic } from '@libs/decorators';
 import {
   Injectable,
   CanActivate,
@@ -5,7 +6,6 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { isPublic } from '@shared/decorators';
 import { StudentService } from '@student/student.service';
 import { Request } from 'express';
 import { Observable } from 'rxjs';

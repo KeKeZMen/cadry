@@ -1,9 +1,9 @@
 import { AuthModule } from '@auth/auth.module';
 import { JwtGuard } from '@auth/guards/jwt.guard';
 import { BranchModule } from '@branch/branch.module';
-import { DatabaseModule } from '@database/database.module';
 import { DirectionModule } from '@direction/direction.module';
 import { EmployeeModule } from '@employee/employee.module';
+import { DatabaseModule } from '@libs/database';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -17,8 +17,8 @@ import { WorkProfessionModule } from '@work-profession/work-profession.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
-    UserModule,
     DatabaseModule,
+    UserModule,
     AuthModule,
     OrganizationModule,
     BranchModule,
