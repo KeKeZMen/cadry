@@ -6,9 +6,7 @@ import { RmqOptions } from "@nestjs/microservices";
 async function bootstrap() {
   const app = await NestFactory.create(ImportModule);
   const rmqService = app.get<RmqService>(RmqService);
-  app.connectMicroservice<RmqOptions>(
-    rmqService.getOptions(IMPORT_QUEUE, true)
-  );
+  app.connectMicroservice<RmqOptions>(rmqService.getOptions(IMPORT_QUEUE));
   await app.startAllMicroservices();
 }
 bootstrap();

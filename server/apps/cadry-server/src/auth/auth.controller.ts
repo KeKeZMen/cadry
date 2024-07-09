@@ -5,6 +5,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Inject,
   Post,
   Res,
   UnauthorizedException,
@@ -16,13 +17,18 @@ import { RegisterDto } from "./dto";
 import { LoginDto } from "./dto/login.dto";
 import { Response } from "express";
 import { Tokens } from "./interfaces";
+import { ClientProxy } from "@nestjs/microservices";
+import { IMPORT_QUEUE } from "@libs/rmq";
 
 const REFRESH_TOKEN = "refreshToken";
 
 @Public()
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    @Inject(IMPORT_QUEUE) private readonly importClient: ClientProxy
+  ) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post("register-organization")
@@ -101,6 +107,19 @@ export class AuthController {
       httpOnly: true,
       sameSite: "lax",
       expires: new Date(tokens.refreshToken.exp),
+    });
+  }
+
+  @Get("test")
+  test() {
+    const opa = this.importClient.emit("import", {
+      uuid: "asdasd-asdasd-asdasd",
+    });
+
+    opa.subscribe({
+      complete() {
+        console.log("complete");
+      },
     });
   }
 }

@@ -11,6 +11,10 @@ import { DatabaseService } from "@libs/database";
 export class ImportService {
   constructor(private readonly databaseService: DatabaseService) {}
 
+  async test(uuid: string) {
+    return uuid;
+  }
+
   async import(fileUUID: string) {
     const students = [];
     const filePath = fileUUID + ".xlsx";
