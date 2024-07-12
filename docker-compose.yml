@@ -8,6 +8,7 @@ services:
       - ./server/.env
     environment:
       - DATABASE_URL=postgresql://postgres@host.docker.internal:5432/cadry
+      - RABBIT_MQ_URI=amqp://rabbitmq:5672
     depends_on:
       - rabbitmq
     volumes:
@@ -22,6 +23,7 @@ services:
       - ./server/.env
     environment:
       - DATABASE_URL=postgresql://postgres@host.docker.internal:5432/cadry
+      - RABBIT_MQ_URI=amqp://rabbitmq:5672
     depends_on:
       - rabbitmq
     volumes:
