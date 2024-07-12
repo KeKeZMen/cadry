@@ -16,9 +16,7 @@ export class ImportController {
   ) {}
 
   @MessagePattern("import")
-  async import(@Payload() data: { uuid: string }, @Ctx() context: RmqContext) {
-    const uuid = await this.importService.test(data.uuid);
-    console.log(uuid);
-    this.rmqService.ack(context);
+  async import(@Payload() uuid: string) {
+    return uuid;
   }
 }

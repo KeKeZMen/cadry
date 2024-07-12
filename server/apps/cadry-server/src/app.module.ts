@@ -14,13 +14,11 @@ import { IsActiveGuard } from "@student/guards/IsActive.guard";
 import { StudentModule } from "@student/student.module";
 import { UserModule } from "@user/user.module";
 import { WorkProfessionModule } from "@work-profession/work-profession.module";
+import { ImportModule } from "./import/import.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ".env" }),
-    RmqModule.register({
-      name: IMPORT_QUEUE,
-    }),
     DatabaseModule,
     UserModule,
     AuthModule,
@@ -31,6 +29,7 @@ import { WorkProfessionModule } from "@work-profession/work-profession.module";
     DirectionModule,
     SpecialityModule,
     WorkProfessionModule,
+    ImportModule,
   ],
   providers: [
     {
