@@ -16,7 +16,7 @@ import { CurrentUser, Roles } from "@libs/decorators";
 export class ImportController {
   constructor(private readonly importService: ImportService) {}
 
-  @Post("import")
+  @Post()
   @UseInterceptors(FileInterceptor("file"))
   async importStudents(
     @UploadedFile() file: Express.Multer.File,
