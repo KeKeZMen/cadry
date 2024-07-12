@@ -1,5 +1,5 @@
 import { IMPORT_QUEUE } from "@libs/rmq";
-import { Inject, Injectable } from "@nestjs/common";
+import { HttpException, Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { firstValueFrom } from "rxjs";
 import { writeFile } from "fs/promises";
@@ -17,6 +17,11 @@ export class ImportService {
     await writeFile(filePath, file.buffer);
 
     const data = await firstValueFrom(this.importClient.send("import", uuid));
+
+    if (data.status >= 400) {
+      throw new HttpException(data.message, data.status);
+    }
+
     return data;
   }
 }

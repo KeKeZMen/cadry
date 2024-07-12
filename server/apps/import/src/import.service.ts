@@ -3,7 +3,7 @@ import {
   ConflictException,
   Injectable,
 } from "@nestjs/common";
-import exceljs from "exceljs";
+import { Workbook } from "exceljs";
 import { DatabaseService } from "@libs/database";
 import { unlink } from "fs/promises";
 
@@ -15,11 +15,14 @@ export class ImportService {
     const students = [];
     const filePath = `files/${uuid}.xlsx`;
 
-    const wb = new exceljs.Workbook();
+    const wb = new Workbook();
     const workbook = await wb.xlsx.readFile(filePath);
 
     const worksheet = workbook.getWorksheet("Шаблон");
-    if (!worksheet) throw new BadRequestException("Неверный формат таблицы");
+    if (!worksheet) {
+      await unlink(filePath);
+      return new BadRequestException("Неверный формат таблицы")
+    };
 
     const organizationName = worksheet.getCell(3, 2).value.toString();
 
@@ -43,7 +46,8 @@ export class ImportService {
       });
 
       if (candidate) {
-        throw new ConflictException(
+        await unlink(filePath);
+        return new ConflictException(
           `Пользователь с email ${email.text} уже существует`
         );
       }
