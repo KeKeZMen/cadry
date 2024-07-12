@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
 const API_URL = `${import.meta.env.VITE_API_URL}`;
 
@@ -12,18 +12,37 @@ $api.interceptors.request.use((config) => {
   return config;
 });
 
+// $api.interceptors.response.use(
+//   (config) => config,
+//   async (error) => {
+//     const originalRequest = error.config as AxiosResponse<any, any>;
+//     const errorStatus = error.response?.status;
+
+//     if (errorStatus == 401 && error.config && !error.config._isRetry) {
+//       originalRequest._isRetry = true;
+
+//       try {
+//         const response = await axios.get<IAuthResponse>(
+//           `${API_URL}/auth/refresh`,
+//           { withCredentials: true }
+//         );
+//         localStorage.setItem("token", response.data.accessToken);
+//         return $api.request(originalRequest);
+//       } catch (error) {
+//         throw error;
+//       }
+//     }
+
+//     throw error;
+//   }
+// );
+
 $api.interceptors.response.use(
   (config) => config,
-  async (error) => {
-    const originalRequest = error.config;
+  async (error: AxiosError) => {
+    const originalRequest = error.config as AxiosRequestConfig;
 
-    if (
-      error.response?.status == 401 &&
-      error.config &&
-      !error.config._isRetry
-    ) {
-      originalRequest._isRetry = true;
-
+    if (error.status == 401 && error.config) {
       try {
         const response = await axios.get<IAuthResponse>(
           `${API_URL}/auth/refresh`,
@@ -32,10 +51,8 @@ $api.interceptors.response.use(
         localStorage.setItem("token", response.data.accessToken);
         return $api.request(originalRequest);
       } catch (error) {
-        throw error;
+        localStorage.removeItem("token");
       }
     }
-
-    throw error;
   }
 );

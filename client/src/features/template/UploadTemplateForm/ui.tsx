@@ -12,9 +12,14 @@ export const UploadTemplateForm = () => {
   const onSubmit: SubmitHandler<z.infer<typeof importTemplate>> = async (
     data
   ) => {
-    const formData = new FormData();
-    formData.append("file", data.file[0]);
-    await $api.post("/import", formData);
+    try {
+      const formData = new FormData();
+      formData.append("file", data.file[0]);
+      console.log(Object.fromEntries(formData));
+      await $api.post("/import", formData);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
