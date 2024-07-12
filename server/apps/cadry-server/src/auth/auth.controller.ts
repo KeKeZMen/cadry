@@ -109,17 +109,4 @@ export class AuthController {
       expires: new Date(tokens.refreshToken.exp),
     });
   }
-
-  @Get("test")
-  test() {
-    const opa = this.importClient.emit("import", {
-      uuid: "asdasd-asdasd-asdasd",
-    });
-
-    opa.subscribe({
-      complete() {
-        console.log("complete");
-      },
-    });
-  }
 }

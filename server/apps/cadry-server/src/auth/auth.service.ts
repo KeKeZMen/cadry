@@ -2,16 +2,16 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { UserService } from '@user/user.service';
-import { OrganizationService } from '@organization/organization.service';
-import { RegisterDto } from './dto';
-import { LoginDto } from './dto/login.dto';
-import { User } from '@prisma/client';
-import { JwtService } from '@nestjs/jwt';
-import { randomUUID } from 'crypto';
-import { compareSync } from 'bcryptjs';
-import { DatabaseService } from '@libs/database';
+} from "@nestjs/common";
+import { UserService } from "@user/user.service";
+import { OrganizationService } from "@organization/organization.service";
+import { RegisterDto } from "./dto";
+import { LoginDto } from "./dto/login.dto";
+import { User } from "@prisma/client";
+import { JwtService } from "@nestjs/jwt";
+import { randomUUID } from "crypto";
+import { compareSync } from "bcryptjs";
+import { DatabaseService } from "@libs/database";
 
 @Injectable()
 export class AuthService {
@@ -19,30 +19,30 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly organizationService: OrganizationService,
     private readonly jwtService: JwtService,
-    private readonly database: DatabaseService,
+    private readonly database: DatabaseService
   ) {}
 
   async registerOrganization(registerDto: RegisterDto) {
     const emailCandidate = await this.userService.findOneByIdOrEmail(
-      registerDto.email,
+      registerDto.email
     );
 
     if (emailCandidate) {
-      throw new ConflictException('Организация с таким email уже существует');
+      throw new ConflictException("Организация с таким email уже существует");
     }
 
     const innCandidate = await this.organizationService.findOneByIdOrInn(
-      registerDto.inn,
+      registerDto.inn
     );
 
     if (innCandidate) {
-      throw new ConflictException('Организация с таким ИНН уже существует');
+      throw new ConflictException("Организация с таким ИНН уже существует");
     }
 
     const user = await this.userService.create({
       email: registerDto.email,
       password: registerDto.password,
-      role: 'Organization',
+      role: "Organization",
     });
 
     return await this.organizationService.createOrganizationViaUser({
@@ -56,7 +56,7 @@ export class AuthService {
     const user = await this.userService.findOneByIdOrEmail(loginDto.email);
 
     if (!user || !compareSync(loginDto.password, user.password)) {
-      throw new UnauthorizedException('Неверный логин или пароль');
+      throw new UnauthorizedException("Неверный логин или пароль");
     }
 
     return this.generateTokens(user, userAgent);
@@ -96,20 +96,23 @@ export class AuthService {
   }
 
   private async generateTokens(user: Partial<User>, userAgent: string) {
-    const accessToken =
-      'Bearer ' +
-      this.jwtService.sign(
-        {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-        },
-        { expiresIn: '15m' },
-      );
+    const accessToken = this.jwtService.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
+      { expiresIn: "15m" }
+    );
 
     const refreshToken = await this.getRefreshToken(user.id, userAgent);
 
     return {
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
       accessToken,
       refreshToken,
     };
@@ -123,7 +126,7 @@ export class AuthService {
       },
     });
 
-    const token = _token?.token ?? '';
+    const token = _token?.token ?? "";
 
     return await this.database.token.upsert({
       where: {
