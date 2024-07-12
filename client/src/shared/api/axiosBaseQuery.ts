@@ -1,7 +1,7 @@
 import { BaseQueryFn } from "@reduxjs/toolkit/query/react";
 import { AxiosRequestConfig } from "axios";
 
-import $api from "./axiosApi";
+import { $api } from "./axiosApi";
 
 type AxiosQueryType = {
   url: string;

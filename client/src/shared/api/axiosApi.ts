@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const API_URL = `${import.meta.env.VITE_SERVER_URL}/api`;
+const API_URL = `${import.meta.env.VITE_API_URL}`;
 
-const $api = axios.create({
+export const $api = axios.create({
   withCredentials: true,
   baseURL: API_URL,
 });
@@ -26,7 +26,7 @@ $api.interceptors.response.use(
 
       try {
         const response = await axios.get<IAuthResponse>(
-          `${API_URL}/users/refresh`,
+          `${API_URL}/auth/refresh`,
           { withCredentials: true }
         );
         localStorage.setItem("token", response.data.accessToken);
@@ -39,5 +39,3 @@ $api.interceptors.response.use(
     throw error;
   }
 );
-
-export default $api;
