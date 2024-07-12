@@ -1,6 +1,9 @@
+import { authSlice } from "@entities/auth";
 import { combineReducers, configureStore } from "@reduxjs/toolkit/react";
 
-const rootReducer = combineReducers({});
+const rootReducer = combineReducers({
+  [authSlice.name]: authSlice.reducer,
+});
 
 export const makeStore = () =>
   configureStore({
