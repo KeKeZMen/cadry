@@ -12,24 +12,24 @@ import {
   Get,
   Res,
   Header,
-} from '@nestjs/common';
-import { OrganizationService } from './organization.service';
-import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
-import { BranchService } from '@branch/branch.service';
-import { UserService } from '@user/user.service';
-import { RolesGuard } from '@auth/guards/roles.guards';
-import { Response } from 'express';
-import { CurrentUser, Public, Roles } from '@libs/decorators';
+} from "@nestjs/common";
+import { OrganizationService } from "./organization.service";
+import { CreateOrganizationDto, UpdateOrganizationDto } from "./dto";
+import { BranchService } from "@branch/branch.service";
+import { UserService } from "@user/user.service";
+import { RolesGuard } from "@auth/guards/roles.guards";
+import { Response } from "express";
+import { CurrentUser, Public, Roles } from "@libs/decorators";
 
-@Controller('organization')
+@Controller("organization")
 export class OrganizationController {
   constructor(
     private readonly organizationService: OrganizationService,
     private readonly branchService: BranchService,
-    private readonly userService: UserService,
+    private readonly userService: UserService
   ) {}
 
-  @Roles('Admin')
+  @Roles("Admin")
   @Post()
   async create(@Body() createOrganizationDto: CreateOrganizationDto) {
     return await this.organizationService.create(createOrganizationDto);
@@ -40,22 +40,22 @@ export class OrganizationController {
     return await this.organizationService.findMany();
   }
 
-  @Roles('Organization', 'Admin')
+  @Roles("Organization", "Admin")
   @UseGuards(RolesGuard)
-  @Patch(':id')
+  @Patch(":id")
   async update(
-    @Param('id', ParseUUIDPipe) organizationId: string,
+    @Param("id", ParseUUIDPipe) organizationId: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto,
-    @CurrentUser() currentUser: IJwtPayload,
+    @CurrentUser() currentUser: IJwtPayload
   ) {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
     const canUpdate =
-      (user.role === 'Organization' &&
+      (user.role === "Organization" &&
         user.organization.id === organizationId) ||
-      (user.employee.employeeType === 'Manager' &&
+      (user.employee.employeeType === "Manager" &&
         user.organization.id === organizationId) ||
-      user.role === 'Admin';
+      user.role === "Admin";
 
     if (canUpdate) {
       throw new UnauthorizedException();
@@ -63,46 +63,46 @@ export class OrganizationController {
 
     return await this.organizationService.update(
       organizationId,
-      updateOrganizationDto,
+      updateOrganizationDto
     );
   }
 
-  @Roles('Admin')
+  @Roles("Admin")
   @UseGuards(RolesGuard)
-  @Delete(':id')
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  @Delete(":id")
+  async remove(@Param("id", ParseUUIDPipe) id: string) {
     const branches = await this.branchService.findManyByOrganizationId(id);
 
     if (branches.length >= 1) {
       throw new ConflictException(
-        'Невозможно удалить организацию, которая имеет филиалы',
+        "Невозможно удалить организацию, которая имеет филиалы"
       );
     }
 
     return await this.organizationService.remove(id);
   }
 
-  @Roles('Employee', 'Organization', 'Admin')
+  @Roles("Employee", "Organization", "Admin")
   @UseGuards(RolesGuard)
   @Header(
-    'Content-Type',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
   )
-  @Get('template/:organizationId/:specialityId')
+  @Get("template/:organizationId/:specialityId")
   async getDocumentTemplate(
-    @Param('organizationId') organizationId: string,
-    @Param('specialityId') specialityId: string,
+    @Param("organizationId") organizationId: string,
+    @Param("specialityId") specialityId: string,
     @CurrentUser() currentUser: IJwtPayload,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
     const canGet =
-      (user.employee.employeeType === 'Graduates' &&
+      (user.employee.employeeType === "Graduates" &&
         user.organization.id === organizationId) ||
-      (user.role === 'Organization' &&
+      (user.role === "Organization" &&
         user.organization.id === organizationId) ||
-      user.role === 'Admin';
+      user.role === "Admin";
 
     if (!canGet) {
       throw new UnauthorizedException();
@@ -110,7 +110,7 @@ export class OrganizationController {
 
     const fileStream = await this.organizationService.getTemplateStream(
       +specialityId,
-      organizationId,
+      organizationId
     );
 
     fileStream.pipe(res);

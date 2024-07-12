@@ -3,21 +3,17 @@ import {
   ConflictException,
   Injectable,
 } from "@nestjs/common";
-import fs from "fs/promises";
 import exceljs from "exceljs";
 import { DatabaseService } from "@libs/database";
+import { unlink } from "fs/promises";
 
 @Injectable()
 export class ImportService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async test(uuid: string) {
-    return uuid;
-  }
-
-  async import(fileUUID: string) {
+  async import(uuid: string) {
     const students = [];
-    const filePath = fileUUID + ".xlsx";
+    const filePath = `files/${uuid}.xlsx`;
 
     const wb = new exceljs.Workbook();
     const workbook = await wb.xlsx.readFile(filePath);
@@ -117,7 +113,7 @@ export class ImportService {
       });
     }
 
-    await fs.unlink(filePath);
+    await unlink(filePath);
 
     return students;
   }

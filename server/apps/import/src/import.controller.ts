@@ -1,22 +1,13 @@
 import { Controller } from "@nestjs/common";
 import { ImportService } from "./import.service";
-import {
-  Ctx,
-  MessagePattern,
-  Payload,
-  RmqContext,
-} from "@nestjs/microservices";
-import { RmqService } from "@libs/rmq";
+import { MessagePattern, Payload } from "@nestjs/microservices";
 
 @Controller()
 export class ImportController {
-  constructor(
-    private readonly importService: ImportService,
-    private readonly rmqService: RmqService
-  ) {}
+  constructor(private readonly importService: ImportService) {}
 
   @MessagePattern("import")
   async import(@Payload() uuid: string) {
-    return uuid;
+    return await this.importService.import(uuid);
   }
 }

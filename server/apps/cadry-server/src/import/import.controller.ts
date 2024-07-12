@@ -1,14 +1,27 @@
-import { Controller, Get } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
 import { ImportService } from "./import.service";
-import { Public } from "@libs/decorators";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { RolesGuard } from "@auth/guards/roles.guards";
+import { CurrentUser, Roles } from "@libs/decorators";
 
-@Public()
+@Roles("Employee", "Admin")
+@UseGuards(RolesGuard)
 @Controller("import")
 export class ImportController {
   constructor(private readonly importService: ImportService) {}
 
-  @Get()
-  async test() {
-    return await this.importService.test();
+  @Post("import")
+  @UseInterceptors(FileInterceptor("file"))
+  async importStudents(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() currentUser: IJwtPayload
+  ) {
+    return await this.importService.import(file, currentUser.id);
   }
 }

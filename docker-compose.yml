@@ -10,6 +10,8 @@ services:
       - DATABASE_URL=postgresql://postgres@host.docker.internal:5432/cadry
     depends_on:
       - rabbitmq
+    volumes:
+      - ./server/files:/usr/app/src/files:rw
 
   import:
     build:
@@ -22,6 +24,8 @@ services:
       - DATABASE_URL=postgresql://postgres@host.docker.internal:5432/cadry
     depends_on:
       - rabbitmq
+    volumes:
+      - ./server/files:/usr/app/src/files:rw
 
   nginx:
     build:
