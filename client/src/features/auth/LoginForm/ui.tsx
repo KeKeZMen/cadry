@@ -11,7 +11,7 @@ const loginSchema = z.object({
 
 export const LoginForm = () => {
   const dispatch = useAppDispatch();
-  const {} = useAppSelector((state) => state.auth);
+  const { isError, errorData } = useAppSelector((state) => state.auth);
   const { handleSubmit, register } = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
   });
@@ -23,6 +23,7 @@ export const LoginForm = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <input type="email" {...register("email")} placeholder="Email" />
       <input type="password" {...register("password")} placeholder="Пароль" />
+      {isError && <p>{errorData}</p>}
       <button type="submit">Войти</button>
     </form>
   );

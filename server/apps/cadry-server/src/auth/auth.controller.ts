@@ -5,7 +5,6 @@ import {
   Controller,
   Get,
   HttpStatus,
-  Inject,
   Post,
   Res,
   UnauthorizedException,
@@ -17,8 +16,6 @@ import { RegisterDto } from "./dto";
 import { LoginDto } from "./dto/login.dto";
 import { Response } from "express";
 import { Tokens } from "./interfaces";
-import { ClientProxy } from "@nestjs/microservices";
-import { IMPORT_QUEUE } from "@libs/rmq";
 
 const REFRESH_TOKEN = "refreshToken";
 
@@ -26,8 +23,7 @@ const REFRESH_TOKEN = "refreshToken";
 @Controller("auth")
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
-    @Inject(IMPORT_QUEUE) private readonly importClient: ClientProxy
+    private readonly authService: AuthService
   ) {}
 
   @UseInterceptors(ClassSerializerInterceptor)

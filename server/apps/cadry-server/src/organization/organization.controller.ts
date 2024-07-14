@@ -95,13 +95,13 @@ export class OrganizationController {
     @CurrentUser() currentUser: IJwtPayload,
     @Res() res: Response
   ) {
-    const user = await this.userService.findOneByIdOrEmail(currentUser.id);    
+    const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
     const canGet =
-    //   (user.employee?.employeeType === "Graduates" &&
-    //     user.organization?.id === organizationId) ||
-    //   (user.role === "Organization" &&
-    //     user.organization?.id === organizationId) ||
+      //   (user.employee?.employeeType === "Graduates" &&
+      //     user.organization?.id === organizationId) ||
+      //   (user.role === "Organization" &&
+      //     user.organization?.id === organizationId) ||
       user.role === "Admin";
 
     if (!canGet) {
