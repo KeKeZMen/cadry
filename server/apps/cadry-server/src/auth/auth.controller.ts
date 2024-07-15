@@ -46,7 +46,7 @@ export class AuthController {
 
     this.setRefreshTokenToCookies(tokens, res);
 
-    res.json({ accessToken: tokens.accessToken });
+    res.json({ accessToken: tokens.accessToken, user: tokens.user });
   }
 
   @Get("refresh")
@@ -70,7 +70,7 @@ export class AuthController {
 
     this.setRefreshTokenToCookies(tokens, res);
 
-    res.json({ accessToken: tokens.accessToken });
+    res.json({ accessToken: tokens.accessToken, user: tokens.user });
   }
 
   @Get("logout")

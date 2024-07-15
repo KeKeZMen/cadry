@@ -59,7 +59,7 @@ export class AuthService {
       throw new UnauthorizedException("Неверный логин или пароль");
     }
 
-    return this.generateTokens(user, userAgent);
+    return await this.generateTokens(user, userAgent);
   }
 
   async refreshTokens(refreshToken: string, userAgent: string) {
