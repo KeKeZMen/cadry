@@ -1,5 +1,4 @@
 import { Navigate } from "react-router-dom";
-
 import { useAppSelector } from "../hooks/reduxHooks";
 
 type PropsType = {
