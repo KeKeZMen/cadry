@@ -1,4 +1,4 @@
-import { authSlice } from "@entities/auth";
+import { authSlice } from "@features/auth";
 import { combineReducers, configureStore } from "@reduxjs/toolkit/react";
 
 const rootReducer = combineReducers({

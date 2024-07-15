@@ -1,4 +1,4 @@
-import { LoginForm } from "@features/auth/LoginForm";
+import { LoginForm } from "@features/auth/";
 import { GetTemplateButton } from "@features/template/GetTemplateButton";
 import { UploadTemplateForm } from "@features/template/UploadTemplateForm";
 
