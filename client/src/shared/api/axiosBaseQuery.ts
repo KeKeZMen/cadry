@@ -1,7 +1,7 @@
 import { BaseQueryFn } from "@reduxjs/toolkit/query/react";
 import { AxiosRequestConfig } from "axios";
 
-import { $api } from "./axiosApi";
+import { $api, ErrorResponseType } from "./axiosApi";
 
 type AxiosQueryType = {
   url: string;
@@ -17,13 +17,8 @@ export const axiosBaseQuery =
   async ({ url, method, data, params }) => {
     try {
       const result = await $api({ url: baseUrl + url, method, data, params });
-
       return { data: result.data };
-    } catch (axiosError) {
-      let error = axiosError as any;
-
-      return {
-        error: error.response?.data.message,
-      };
+    } catch (error) {
+      return error as ErrorResponseType;
     }
   };
