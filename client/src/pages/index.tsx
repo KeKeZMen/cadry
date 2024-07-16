@@ -1,8 +1,11 @@
 import { RequiredRoles, RequireAuth, useAppDispatch } from "@shared";
 import { lazy, useEffect } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { reauth } from "@features/auth";
 import MainPage from "./MainPage";
+import { Header } from "@widgets/Header";
+import { Footer } from "@widgets/Footer";
+import { Layout } from "@widgets/Layout";
 
 const AdminPage = lazy(() => import("./AdminPage"));
 
@@ -15,18 +18,41 @@ export const Routing = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<MainPage />} />
-
       <Route
-        path="/admin"
         element={
-          <RequireAuth>
-            <RequiredRoles roles={["Admin"]}>
-              <AdminPage />
-            </RequiredRoles>
-          </RequireAuth>
+          <Layout>
+            <Outlet />
+          </Layout>
         }
-      />
+      >
+        <Route path="/" element={<MainPage />} />
+
+        <Route
+          element={
+            <RequireAuth>
+              <Outlet />
+            </RequireAuth>
+          }
+        >
+          <Route
+            path="/admin"
+            element={
+              <RequiredRoles roles={["Admin"]}>
+                <AdminPage />
+              </RequiredRoles>
+            }
+          />
+
+          <Route
+            path="/organization"
+            element={
+              <RequiredRoles roles={["Organization"]}>
+                <></>
+              </RequiredRoles>
+            }
+          />
+        </Route>
+      </Route>
 
       <Route path="*" element={<Navigate to={"/"} replace />} />
     </Routes>
