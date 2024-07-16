@@ -17,9 +17,7 @@ import { registerOrganization } from "../api";
 import { FC } from "react";
 
 type PropsType = {
-  onClose: () => void;
   toggleVariant: () => void;
-  onError: () => void;
 };
 
 const registerSchema = z
@@ -32,25 +30,22 @@ const registerSchema = z
       .min(1, { message: "Поле не может быть пустым" })
       .email({ message: "Неверный формат почты" }),
     password: z.string().min(1, { message: "Поле не может быть пустым" }),
-    repeatPassword: z.string().min(1, { message: "Поле не может быть пустым" }),
+    passwordRepeat: z.string().min(1, { message: "Поле не может быть пустым" }),
   })
-  .superRefine(({ password, repeatPassword }, ctx) => {
-    if (password !== repeatPassword) {
+  .superRefine(({ password, passwordRepeat }, ctx) => {
+    if (password !== passwordRepeat) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         fatal: true,
         message: "Пароли не совпадают",
+        path: ["passwordRepeat"],
       });
     }
   });
 
-export const RegisterForm: FC<PropsType> = ({
-  onClose,
-  toggleVariant,
-  onError,
-}) => {
+export const RegisterForm: FC<PropsType> = ({ toggleVariant }) => {
   const dispatch = useAppDispatch();
-  const { isError, isLoading } = useAppSelector((state) => state.auth);
+  const { isLoading } = useAppSelector((state) => state.auth);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -58,15 +53,12 @@ export const RegisterForm: FC<PropsType> = ({
       inn: "",
       email: "",
       password: "",
-      repeatPassword: "",
+      passwordRepeat: "",
     },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof registerSchema>> = (data) => {
+  const onSubmit: SubmitHandler<z.infer<typeof registerSchema>> = (data) =>
     dispatch(registerOrganization(data));
-    if (!isError) onClose();
-    else onError();
-  };
 
   return (
     <Form {...form}>
@@ -123,7 +115,7 @@ export const RegisterForm: FC<PropsType> = ({
 
         <FormField
           control={form.control}
-          name="repeatPassword"
+          name="passwordRepeat"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Повторите пароль</FormLabel>

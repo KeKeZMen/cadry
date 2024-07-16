@@ -3,16 +3,19 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  useAppDispatch,
   useAppSelector,
   useToast,
 } from "@shared";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RegisterForm } from "./RegisterForm";
 import { LoginForm } from "./LoginForm";
+import { resetError } from "../model";
 
 type VariantsType = "LOGIN" | "REGISTER";
 
 export const LoginButton = () => {
+  const dispatch = useAppDispatch();
   const { toast } = useToast();
 
   const [variant, setVariant] = useState<VariantsType>("LOGIN");
@@ -24,18 +27,26 @@ export const LoginButton = () => {
   const [isOpenedModal, setIsOpenedModal] = useState(false);
   const handleModal = useCallback(() => setIsOpenedModal((prev) => !prev), []);
 
-  const { errorMessage } = useAppSelector((state) => state.auth);
-  const onError = useCallback(() => {
-    const { dismiss } = toast({
-      title: "Ошибка",
-      variant: "destructive",
-      description: errorMessage,
-    });
+  const { errorMessage, isAuth, isError } = useAppSelector(
+    (state) => state.auth
+  );
 
-    setTimeout(() => {
-      dismiss();
-    }, 3000);
-  }, [errorMessage]);
+  useEffect(() => {
+    if (errorMessage && !isAuth) {
+      const { dismiss } = toast({
+        title: "Ошибка",
+        variant: "destructive",
+        description: errorMessage,
+      });
+
+      setTimeout(() => {
+        dispatch(resetError());
+        dismiss();
+      }, 3000);
+    }
+
+    if (isAuth && !isError) handleModal();
+  }, [errorMessage, isAuth]);
 
   return (
     <>
@@ -49,17 +60,9 @@ export const LoginButton = () => {
             {variant === "LOGIN" ? "Войти" : "Зарегистрироваться"}
           </DialogTitle>
           {variant === "LOGIN" ? (
-            <LoginForm
-              onClose={handleModal}
-              toggleVariant={handleVariant}
-              onError={onError}
-            />
+            <LoginForm toggleVariant={handleVariant} />
           ) : (
-            <RegisterForm
-              onClose={handleModal}
-              toggleVariant={handleVariant}
-              onError={onError}
-            />
+            <RegisterForm toggleVariant={handleVariant} />
           )}
         </DialogContent>
       </Dialog>

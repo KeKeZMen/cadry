@@ -5,6 +5,7 @@ export type RegisterType = {
   inn: string;
   email: string;
   password: string;
+  passwordRepeat: string;
 };
 
 export type LoginType = {
@@ -41,14 +42,15 @@ export const reauth = createAsyncThunk("auth/refresh", async (_, thunkApi) => {
 
 export const registerOrganization = createAsyncThunk(
   "auth/registration",
-  async ({ inn, password, email }: RegisterType, thunkApi) => {
+  async ({ inn, email, password, passwordRepeat }: RegisterType, thunkApi) => {
     try {
       const result = await baseAxios.post<IAuthResponse>(
         "/auth/register-organization",
         {
           inn,
-          password,
           email,
+          password,
+          passwordRepeat,
         }
       );
       localStorage.setItem("token", result.data.accessToken);

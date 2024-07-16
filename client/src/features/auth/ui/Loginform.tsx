@@ -17,9 +17,7 @@ import { z } from "zod";
 import { login } from "../api";
 
 type PropsType = {
-  onClose: () => void;
   toggleVariant: () => void;
-  onError: () => void;
 };
 
 const loginSchema = z.object({
@@ -30,13 +28,9 @@ const loginSchema = z.object({
   password: z.string().min(1, { message: "Поле не может быть пустым" }),
 });
 
-export const LoginForm: FC<PropsType> = ({
-  onClose,
-  toggleVariant,
-  onError,
-}) => {
+export const LoginForm: FC<PropsType> = ({ toggleVariant }) => {
   const dispatch = useAppDispatch();
-  const { isError, isLoading } = useAppSelector((state) => state.auth);
+  const { isLoading } = useAppSelector((state) => state.auth);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -46,11 +40,8 @@ export const LoginForm: FC<PropsType> = ({
     },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof loginSchema>> = (data) => {
+  const onSubmit: SubmitHandler<z.infer<typeof loginSchema>> = (data) =>
     dispatch(login(data));
-    if (!isError) onClose();
-    else onError();
-  };
 
   return (
     <Form {...form}>
