@@ -45,11 +45,13 @@ export class AuthService {
       role: "Organization",
     });
 
-    return await this.organizationService.createOrganizationViaUser({
+    await this.organizationService.createOrganizationViaUser({
       userId: user.id,
       email: registerDto.email,
       inn: registerDto.inn,
     });
+
+    return user
   }
 
   async login(loginDto: LoginDto, userAgent: string) {

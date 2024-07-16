@@ -22,14 +22,26 @@ const REFRESH_TOKEN = "refreshToken";
 @Public()
 @Controller("auth")
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post("register-organization")
-  async registerOrganization(@Body() registerDto: RegisterDto) {
-    return await this.authService.registerOrganization(registerDto);
+  async registerOrganization(
+    @Body() registerDto: RegisterDto,
+    @Res() res: Response,
+    @UserAgent() userAgent: string
+  ) {
+    const user = await this.authService.registerOrganization(registerDto);
+
+    const tokens = await this.authService.login(user, userAgent);
+
+    if (!tokens) {
+      throw new BadRequestException("Не удалось авторизоваться");
+    }
+
+    this.setRefreshTokenToCookies(tokens, res);
+
+    res.json({ accessToken: tokens.accessToken, user: tokens.user });
   }
 
   @Post("login")
