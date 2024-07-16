@@ -1,11 +1,11 @@
-import { $api } from "@shared";
+import { axiosWithAuth } from "@shared";
 import { useCallback, useRef } from "react";
 
 export const GetTemplateButton = () => {
   const aRef = useRef<HTMLAnchorElement>(null);
 
   const handleGetTemplate = useCallback(async () => {
-    const res = await $api.get(
+    const res = await axiosWithAuth.get(
       "/organization/template/4eb3b4ea-9728-4d6b-ac75-dcc155c440a3/1",
       { responseType: "blob" }
     );

@@ -1,4 +1,4 @@
-import { $api } from "@shared";
+import { axiosWithAuth } from "@shared";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -16,7 +16,7 @@ export const UploadTemplateForm = () => {
       const formData = new FormData();
       formData.append("file", data.file[0]);
       console.log(Object.fromEntries(formData));
-      await $api.post("/import", formData);
+      await axiosWithAuth.post("/import", formData);
     } catch (error) {
       console.log(error);
     }
