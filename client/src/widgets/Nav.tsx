@@ -29,6 +29,7 @@ export const Nav: FC<PropsType> = ({ onClick }) => {
       {links
         .filter((link) => {
           if (link.roles.length === 0) return true;
+          if (user.role === "Admin") return true;
           if (link.roles.includes(user.role)) return true;
         })
         .map((link, i) => (
