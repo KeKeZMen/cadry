@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { $api, ErrorResponseType } from "@shared";
-import axios from "axios";
+import { baseAxios, ErrorResponseType } from "@shared";
 
 export type RegisterType = {
   inn: string;
@@ -17,7 +16,7 @@ export const login = createAsyncThunk(
   "auth/login",
   async ({ email, password }: LoginType, thunkApi) => {
     try {
-      const result = await $api.post<IAuthResponse>("/auth/login", {
+      const result = await baseAxios.post<IAuthResponse>("/auth/login", {
         email,
         password,
       });
@@ -31,26 +30,27 @@ export const login = createAsyncThunk(
 
 export const reauth = createAsyncThunk("auth/refresh", async (_, thunkApi) => {
   try {
-    const result = await axios.get<IAuthResponse>(
-      `${import.meta.env.VITE_SERVER_URL}/auth/refresh`,
-      { withCredentials: true }
-    );
+    const result = await baseAxios.get<IAuthResponse>(`/auth/refresh`);
     localStorage.setItem("token", result.data.accessToken);
     return result.data.user;
   } catch (error) {
+    localStorage.clear();
     return thunkApi.rejectWithValue((error as ErrorResponseType).message);
   }
 });
 
-export const register = createAsyncThunk(
+export const registerOrganization = createAsyncThunk(
   "auth/registration",
   async ({ inn, password, email }: RegisterType, thunkApi) => {
     try {
-      const result = await $api.post<IAuthResponse>("/auth/registration", {
-        inn,
-        password,
-        email,
-      });
+      const result = await baseAxios.post<IAuthResponse>(
+        "/auth/register-organization",
+        {
+          inn,
+          password,
+          email,
+        }
+      );
       localStorage.setItem("token", result.data.accessToken);
       return result.data.user;
     } catch (error) {
@@ -62,7 +62,8 @@ export const register = createAsyncThunk(
 export const logout = createAsyncThunk("auth/logout", async (_, thunkApi) => {
   try {
     localStorage.clear();
-    return await $api.post("/auth/logout");
+    await baseAxios.get("/auth/logout");
+    return;
   } catch (error) {
     return thunkApi.rejectWithValue((error as ErrorResponseType).message);
   }
