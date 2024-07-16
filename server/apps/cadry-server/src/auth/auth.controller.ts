@@ -31,9 +31,9 @@ export class AuthController {
     @Res() res: Response,
     @UserAgent() userAgent: string
   ) {
-    const user = await this.authService.registerOrganization(registerDto);
+    await this.authService.registerOrganization(registerDto);
 
-    const tokens = await this.authService.login(user, userAgent);
+    const tokens = await this.authService.login(registerDto, userAgent);
 
     if (!tokens) {
       throw new BadRequestException("Не удалось авторизоваться");
