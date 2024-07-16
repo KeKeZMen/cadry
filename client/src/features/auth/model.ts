@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login, logout, reauth, register } from "./api";
+import { login, logout, reauth, registerOrganization } from "./api";
 
 type InitialStateType = {
   user: IUser;
@@ -69,15 +69,15 @@ export const authSlice = createSlice({
     });
 
     //registration()
-    builder.addCase(register.pending, (state) => {
+    builder.addCase(registerOrganization.pending, (state) => {
       state.isLoading = true;
     }),
-    builder.addCase(register.fulfilled, (state, action) => {
+    builder.addCase(registerOrganization.fulfilled, (state, action) => {
       state.isLoading = false;
       state.isAuth = false;
       state.user = action.payload as IUser;
     }),
-    builder.addCase(register.rejected, (state, action) => {
+    builder.addCase(registerOrganization.rejected, (state, action) => {
       state.isLoading = false;
       state.isError = true;
       state.errorMessage = action.payload as string;
