@@ -5,12 +5,10 @@ type PropsType = {
   children: JSX.Element;
 };
 
-const RequireAuth = ({ children }: PropsType) => {
+export const RequireAuth = ({ children }: PropsType) => {
   const { isAuth } = useAppSelector((state) => state.auth);
 
-  if (!isAuth) return <Navigate to={"/login"} replace={true} />;
+  if (!isAuth) return <Navigate to={"/"} replace={true} />;
 
   return children;
 };
-
-export default RequireAuth;
