@@ -1,52 +1,107 @@
-import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  useAppDispatch,
+  useAppSelector,
+} from "@shared";
+import { FC } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { useAppDispatch, useAppSelector } from "@shared";
 import { login } from "../api";
 
+type PropsType = {
+  onClose: () => void;
+  toggleVariant: () => void;
+  onError: () => void;
+};
+
 const loginSchema = z.object({
-  email: z.string().email({ message: "Неверный формат почты" }),
-  password: z.string(),
+  email: z
+    .string()
+    .min(1, { message: "Поле не может быть пустым" })
+    .email({ message: "Неверный формат почты" }),
+  password: z.string().min(1, { message: "Поле не может быть пустым" }),
 });
 
-export const LoginForm = () => {
+export const LoginForm: FC<PropsType> = ({
+  onClose,
+  toggleVariant,
+  onError,
+}) => {
   const dispatch = useAppDispatch();
-  const { isError, errorMessage, isLoading } = useAppSelector(
-    (state) => state.auth
-  );
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm<z.infer<typeof loginSchema>>({
+  const { isError, isLoading } = useAppSelector((state) => state.auth);
+
+  const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof loginSchema>> = (data) =>
+  const onSubmit: SubmitHandler<z.infer<typeof loginSchema>> = (data) => {
     dispatch(login(data));
+    if (!isError) onClose();
+    else onError();
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input
-        type="email"
-        {...register("email")}
-        placeholder="Email"
-        disabled={isLoading}
-      />
-      {errors.email && <span>{errors.email.message}</span>}
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex gap-3 flex-col"
+      >
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Электронная почта</FormLabel>
+              <FormControl>
+                <Input {...field} type="email" required disabled={isLoading} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <input
-        type="password"
-        {...register("password")}
-        placeholder="Пароль"
-        disabled={isLoading}
-      />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Пароль</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="password"
+                  required
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <button disabled={isLoading} type="submit">
-        Войти
-      </button>
+        <Button type="submit" disabled={isLoading}>
+          Войти
+        </Button>
+      </form>
 
-      {isError && <p>{errorMessage}</p>}
-    </form>
+      <div className="flex gap-2 justify-center text-sm mt-3 px-2 text-gray-500">
+        <div>Нет аккаунта?</div>
+        <div onClick={toggleVariant} className="underline cursor-pointer">
+          Создать аккаунт
+        </div>
+      </div>
+    </Form>
   );
 };
