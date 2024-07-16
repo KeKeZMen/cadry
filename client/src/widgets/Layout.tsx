@@ -12,7 +12,7 @@ export const Layout: FC<PropsType> = ({ children }) => {
     <>
       <Toaster />
       <Header />
-      {children}
+      <main className="container">{children}</main>
       <Footer />
     </>
   );
