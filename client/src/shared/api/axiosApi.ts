@@ -8,29 +8,38 @@ export type ErrorResponseType = {
 
 const API_URL = `${import.meta.env.VITE_API_URL}`;
 
-export const $api = axios.create({
+export const baseAxios = axios.create({
   withCredentials: true,
   baseURL: API_URL,
 });
 
-$api.interceptors.request.use((config) => {
+baseAxios.interceptors.response.use(
+  (config) => config,
+  (error) => {
+    throw error.response?.data as ErrorResponseType;
+  }
+);
+
+export const axiosWithAuth = axios.create({
+  withCredentials: true,
+  baseURL: API_URL,
+});
+
+axiosWithAuth.interceptors.request.use((config) => {
   config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
   return config;
 });
 
-$api.interceptors.response.use(
+axiosWithAuth.interceptors.response.use(
   (config) => config,
   async (error: AxiosError) => {
     const originalRequest = error.config as AxiosRequestConfig;
 
     if (error.status == 401 && error.config) {
       try {
-        const response = await axios.get<IAuthResponse>(
-          `${API_URL}/auth/refresh`,
-          { withCredentials: true }
-        );
+        const response = await baseAxios.get<IAuthResponse>(`/auth/refresh`);
         localStorage.setItem("token", response.data.accessToken);
-        return $api.request(originalRequest);
+        return axiosWithAuth.request(originalRequest);
       } catch (error) {
         localStorage.removeItem("token");
         throw (error as AxiosError).response?.data as ErrorResponseType;
