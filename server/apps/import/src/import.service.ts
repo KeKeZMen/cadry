@@ -6,6 +6,7 @@ import {
 import { Workbook } from "exceljs";
 import { DatabaseService } from "@libs/database";
 import { unlink } from "fs/promises";
+import { genSaltSync, hashSync } from "bcryptjs";
 
 @Injectable()
 export class ImportService {
@@ -60,7 +61,7 @@ export class ImportService {
           firstName: worksheet.getCell(j, 2).value.toString().trim(),
           secondName: worksheet.getCell(j, 3).value.toString().trim(),
           role: "Student",
-          password,
+          password: hashSync(password, genSaltSync(10)),
         },
       });
 
