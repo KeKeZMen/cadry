@@ -1,7 +1,7 @@
 import { UserProfile } from "@entities/user";
 import { LogoutButton, LoginButton } from "@features/auth";
 import { useAppSelector } from "@shared";
-import { Link } from "react-router-dom";
+import { Nav } from "./Nav";
 
 export const Header = () => {
   const { isAuth } = useAppSelector((state) => state.auth);
@@ -10,7 +10,7 @@ export const Header = () => {
     <header className="flex justify-between items-center py-3">
       <div className="container">
         <div className="flex justify-between items-center">
-          <Link to={"/"}>Главная</Link>
+          <Nav />
 
           {isAuth ? (
             <UserProfile logoutButton={<LogoutButton />} />
