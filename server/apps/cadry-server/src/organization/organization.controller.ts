@@ -53,8 +53,6 @@ export class OrganizationController {
     const canUpdate =
       (user.role === "Organization" &&
         user.organization.id === organizationId) ||
-      (user.employee.employeeType === "Manager" &&
-        user.organization.id === organizationId) ||
       user.role === "Admin";
 
     if (canUpdate) {
@@ -98,11 +96,12 @@ export class OrganizationController {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
     const canGet =
-      //   (user.employee?.employeeType === "Graduates" &&
-      //     user.organization?.id === organizationId) ||
-      //   (user.role === "Organization" &&
-      //     user.organization?.id === organizationId) ||
-      user.role === "Admin";
+      user.role === "Admin" ||
+      (user.role === "Organization" &&
+        user.organization.id === organizationId) ||
+      ((user.employee.employeeType === "Manager" ||
+        user.employee.employeeType === "Graduates") &&
+        user.employee.branch.organizationId === organizationId);
 
     if (!canGet) {
       throw new UnauthorizedException();

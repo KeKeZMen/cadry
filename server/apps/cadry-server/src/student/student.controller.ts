@@ -14,7 +14,7 @@ import { RolesGuard } from "@auth/guards/roles.guards";
 import { UserService } from "@user/user.service";
 import { CurrentUser, Public, Roles } from "@libs/decorators";
 
-@Roles("Employee", "Admin")
+@Roles("Employee", "Admin", "Organization")
 @UseGuards(RolesGuard)
 @Controller("student")
 export class StudentController {
@@ -31,9 +31,13 @@ export class StudentController {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
 
     const canCreate =
-      (user.employee.employeeType === "Graduates" &&
-        createStudentDto.educationOrganizationId === user.organization.id) ||
-      user.role === "Admin";
+      user.role === "Admin" ||
+      (user.role === "Organization" &&
+        user.organization.id === createStudentDto.educationOrganizationId) ||
+      (user.role === "Employee" &&
+        user.employee.employeeType === "Graduates" &&
+        user.employee.branch.organizationId ===
+          createStudentDto.educationOrganizationId);
 
     if (!canCreate) {
       throw new UnauthorizedException();
@@ -59,9 +63,16 @@ export class StudentController {
     @CurrentUser() currentUser: IJwtPayload
   ) {
     const user = await this.userService.findOneByIdOrEmail(currentUser.id);
+    const student = await this.studentService.findOneByUserIdOrEmail(userId);
 
     const canDelete =
-      user.employee.employeeType === "Graduates" || user.role === "Admin";
+      user.role === "Admin" ||
+      (user.role === "Organization" &&
+        user.organization.id === student.educationOrganizationId) ||
+      (user.role === "Employee" &&
+        user.employee.employeeType === "Graduates" &&
+        user.employee.branch.organizationId ===
+          student.educationOrganizationId);
 
     if (!canDelete) {
       throw new UnauthorizedException();

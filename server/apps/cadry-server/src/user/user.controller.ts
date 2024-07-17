@@ -8,37 +8,36 @@ import {
   Patch,
   UnauthorizedException,
   UseGuards,
-} from '@nestjs/common';
-import { UserService } from './user.service';
-import { UpdateUserDto } from './dto';
-import { RolesGuard } from '@auth/guards/roles.guards';
-import { CurrentUser, Roles } from '@libs/decorators';
+} from "@nestjs/common";
+import { UserService } from "./user.service";
+import { UpdateUserDto } from "./dto";
+import { RolesGuard } from "@auth/guards/roles.guards";
+import { CurrentUser, Roles } from "@libs/decorators";
 
-@Controller('user')
+@Controller("user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Patch(':id')
+  @Patch(":userId")
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param("userId", ParseUUIDPipe) userId: string,
     @Body() updateUserDto: UpdateUserDto,
-    @CurrentUser() currentUser: IJwtPayload,
+    @CurrentUser() currentUser: IJwtPayload
   ) {
-    if (currentUser.role !== 'Admin' && currentUser.id !== id) {
+    const user = await this.userService.findOneByIdOrEmail(currentUser.id);
+    const canUpdate = currentUser.id === userId || user.role === "Admin";
+
+    if (!canUpdate) {
       throw new UnauthorizedException();
     }
 
-    if (currentUser.role !== 'Admin' && updateUserDto.role) {
-      throw new UnauthorizedException();
-    }
-
-    return await this.userService.update(id, updateUserDto);
+    return await this.userService.update(userId, updateUserDto);
   }
 
-  @Roles('Admin')
+  @Roles("Admin")
   @UseGuards(RolesGuard)
-  @Delete(':id')
-  async delete(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.userService.delete(id);
+  @Delete(":userId")
+  async delete(@Param("userId", ParseUUIDPipe) userId: string) {
+    return await this.userService.delete(userId);
   }
 }

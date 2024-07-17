@@ -15,6 +15,7 @@ import { StudentModule } from "@student/student.module";
 import { UserModule } from "@user/user.module";
 import { WorkProfessionModule } from "@work-profession/work-profession.module";
 import { ImportModule } from "./import/import.module";
+import { JobRequestModule } from './job-request/job-request.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ImportModule } from "./import/import.module";
     SpecialityModule,
     WorkProfessionModule,
     ImportModule,
+    JobRequestModule,
   ],
   providers: [
     {

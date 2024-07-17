@@ -53,7 +53,15 @@ export class OrganizationService {
   findOneByUserId(userId: string) {
     return this.databaseService.organization.findFirst({
       where: {
-        userId,
+        branches: {
+          some: {
+            employees: {
+              some: {
+                userId
+              }
+            }
+          }
+        }
       },
     });
   }

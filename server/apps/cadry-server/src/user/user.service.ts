@@ -5,12 +5,12 @@ import { DatabaseService } from "@libs/database";
 
 @Injectable()
 export class UserService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService) {}
 
   create(createUserDto: Partial<CreateUserDto>) {
     const hashedPassword = this.hashPassword(createUserDto.password);
 
-    return this.database.user.create({
+    return this.databaseService.user.create({
       data: {
         email: createUserDto.email,
         role: createUserDto.role,
@@ -24,7 +24,7 @@ export class UserService {
   }
 
   findOneByIdOrEmail(idOrEmail: string) {
-    return this.database.user.findFirst({
+    return this.databaseService.user.findFirst({
       where: {
         OR: [{ id: idOrEmail }, { email: idOrEmail }],
       },
@@ -33,17 +33,42 @@ export class UserService {
         role: true,
         email: true,
         password: true,
-        organization: {
-          select: {
-            id: true,
-          },
-        },
         employee: {
           select: {
             employeeType: true,
-            branchId: true,
+            branch: {
+              select: {
+                id: true,
+                organizationId: true,
+              },
+            },
           },
         },
+        organization: {
+          select: {
+            id: true
+          }
+        },
+      },
+    });
+  }
+
+  findOneByOrganizationId(organizationId: string, userId: string) {
+    return this.databaseService.user.findFirst({
+      where: {
+        AND: [
+          { id: userId },
+          {
+            employee: {
+              branch: {
+                organizationId,
+              },
+            },
+          },
+          {
+            OR: [{ role: "Employee" }, { role: "Organization" }],
+          },
+        ],
       },
     });
   }
@@ -51,7 +76,7 @@ export class UserService {
   update(id: string, updateUserDto: UpdateUserDto) {
     const hashedPassword = this.hashPassword(updateUserDto.password);
 
-    return this.database.user.update({
+    return this.databaseService.user.update({
       where: {
         id,
       },
@@ -66,7 +91,7 @@ export class UserService {
   }
 
   delete(id: string) {
-    return this.database.user.delete({
+    return this.databaseService.user.delete({
       where: {
         id,
       },

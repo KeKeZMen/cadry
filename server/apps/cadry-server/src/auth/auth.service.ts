@@ -51,7 +51,7 @@ export class AuthService {
       inn: registerDto.inn,
     });
 
-    return user
+    return user;
   }
 
   async login(loginDto: LoginDto, userAgent: string) {
