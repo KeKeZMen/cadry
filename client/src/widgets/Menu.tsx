@@ -5,6 +5,7 @@ import {
   SheetTitle,
   SheetHeader,
   Separator,
+  SheetDescription,
 } from "@shared";
 import { Menu as Burger } from "lucide-react";
 import { Nav } from "./Nav";
@@ -25,6 +26,7 @@ export const Menu = () => {
       <SheetContent>
         <SheetHeader className="mb-3">
           <SheetTitle>Кадры Подмосковья</SheetTitle>
+          <SheetDescription />
         </SheetHeader>
         <Separator className="my-3" />
         <Nav onClick={handleToggleMenu} />
