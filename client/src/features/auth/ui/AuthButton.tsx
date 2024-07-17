@@ -2,6 +2,8 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogHeader,
   DialogTitle,
   useAppDispatch,
   useAppSelector,
@@ -56,9 +58,12 @@ export const AuthButton = () => {
 
       <Dialog open={isOpenedModal} onOpenChange={handleModal}>
         <DialogContent>
-          <DialogTitle>
-            {variant === "LOGIN" ? "Войти" : "Зарегистрироваться"}
-          </DialogTitle>
+          <DialogHeader>
+            <DialogTitle>
+              {variant === "LOGIN" ? "Войти" : "Зарегистрироваться"}
+            </DialogTitle>
+            <DialogDescription />
+          </DialogHeader>
           {variant === "LOGIN" ? (
             <LoginForm toggleVariant={handleVariant} />
           ) : (
