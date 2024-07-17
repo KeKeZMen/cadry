@@ -70,8 +70,8 @@ model Token {
   @@map("tokens")
 }
 
-model Request {
-  id                      Int             @id @default(autoincrement())
+model JobRequest {
+  id                      String          @id @default(uuid())
   educationOrganizationId String?         @map("education_organization_id")
   workOrganizationId      String          @map("work_organization_id")
   specialityId            Int?            @map("speciality_id")
@@ -94,6 +94,7 @@ model Request {
 }
 
 model Organization {
+  id                           String           @id @default(uuid())
   name                         String?
   phoneNumber                  String?          @map("phone_number")
   email                        String           @unique
@@ -104,11 +105,10 @@ model Organization {
   logoUrl                      String?          @map("logo_url")
   type                         OrganizationType
   userId                       String           @unique @map("user_id")
-  id                           String           @id @default(uuid())
   branches                     Branch[]
   user                         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  educationOrganizationRequest Request[]        @relation("education")
-  workOrganizationRequests     Request[]        @relation("work")
+  educationOrganizationRequest JobRequest[]     @relation("education")
+  workOrganizationRequests     JobRequest[]     @relation("work")
   students                     Student[]
 
   @@index([id])
@@ -143,7 +143,7 @@ model Speciality {
   key            String
   directionId    Int                          @map("direction_id")
   name           String
-  requests       Request[]
+  requests       JobRequest[]
   direction      Direction                    @relation(fields: [directionId], references: [id])
   workProfession WorkProfessionToSpeciality[]
 
@@ -166,7 +166,7 @@ model WorkProfession {
   id           Int                          @id @default(autoincrement())
   name         String
   category     String
-  requests     Request[]
+  requests     JobRequest[]
   students     Student[]
   specialities WorkProfessionToSpeciality[]
 
