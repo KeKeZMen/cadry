@@ -3,8 +3,6 @@ import { lazy, useEffect } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { reauth } from "@features/auth";
 import MainPage from "./MainPage";
-import { Header } from "@widgets/Header";
-import { Footer } from "@widgets/Footer";
 import { Layout } from "@widgets/Layout";
 
 const AdminPage = lazy(() => import("./AdminPage"));
