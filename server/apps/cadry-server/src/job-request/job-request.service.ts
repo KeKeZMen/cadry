@@ -27,6 +27,14 @@ export class JobRequestService {
     return this.databaseService.jobRequest.findMany();
   }
 
+  findManyByOrganizationId(organizationId: string) {
+    return this.databaseService.jobRequest.findMany({
+      where: {
+        workOrganizationId: organizationId,
+      },
+    });
+  }
+
   update(id: string, updateJobRequestDto: UpdateJobRequestDto) {
     return this.databaseService.jobRequest.update({
       where: {
