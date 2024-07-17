@@ -36,6 +36,7 @@ export class OrganizationController {
   }
 
   @Public()
+  @Get()
   async getAll() {
     return await this.organizationService.findMany();
   }
