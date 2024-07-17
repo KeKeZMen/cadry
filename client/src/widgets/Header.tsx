@@ -1,5 +1,5 @@
 import { UserProfile } from "@entities/user";
-import { LogoutButton, LoginButton } from "@features/auth";
+import { LogoutButton, AuthButton } from "@features/auth";
 import { useAppSelector, useWindowSize } from "@shared";
 import { Nav } from "./Nav";
 import { Menu } from "./Menu";
@@ -15,7 +15,7 @@ export const Header = () => {
           {isAuth ? (
             <UserProfile logoutButton={<LogoutButton />} />
           ) : (
-            <LoginButton />
+            <AuthButton />
           )}
           {width >= 768 ? <Nav /> : <Menu />}
         </div>

@@ -14,7 +14,7 @@ import { resetError } from "../model";
 
 type VariantsType = "LOGIN" | "REGISTER";
 
-export const LoginButton = () => {
+export const AuthButton = () => {
   const dispatch = useAppDispatch();
   const { toast } = useToast();
 
