@@ -3,7 +3,7 @@ import { lazy, useEffect } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { reauth } from "@features/auth";
 import MainPage from "./MainPage";
-import { Layout } from "@widgets/Layout";
+import { Layout } from "@widgets";
 
 const AdminPage = lazy(() => import("./AdminPage"));
 
