@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   UnauthorizedException,
+  ParseUUIDPipe,
 } from "@nestjs/common";
 import { JobRequestService } from "./job-request.service";
 import { CreateJobRequestDto } from "./dto/create-job-request.dto";
@@ -16,7 +17,7 @@ import { CurrentUser, Public, Roles } from "@libs/decorators";
 import { RolesGuard } from "@auth/guards/roles.guards";
 import { UserService } from "@user/user.service";
 
-@Roles("Admin", "Organization")
+@Roles("Admin", "Organization", "Employee")
 @UseGuards(RolesGuard)
 @Controller("job-request")
 export class JobRequestController {
@@ -48,6 +49,29 @@ export class JobRequestController {
   @Get()
   findAll() {
     return this.jobRequestService.findAll();
+  }
+
+  @Get(":organizationId")
+  async findManyByOrganizationId(
+    @Param("organizationId", ParseUUIDPipe) organizationId: string,
+    @CurrentUser() currentUser: IJwtPayload
+  ) {
+    const user = await this.userService.findOneByIdOrEmail(currentUser.id);
+
+    const canGet =
+      user.role === "Admin" ||
+      (user.role === "Organization" &&
+        user.organization.id === organizationId) ||
+      (user.role === "Employee" &&
+        user.employee.branch.organizationId === organizationId);
+
+    if (!canGet) {
+      throw new UnauthorizedException();
+    }
+
+    return await this.jobRequestService.findManyByOrganizationId(
+      organizationId
+    );
   }
 
   @Patch(":id")
