@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { login, logout, reauth, registerOrganization } from "./api";
 
 type InitialStateType = {
-  user: IUser;
+  user: IAccount;
   isAuth: boolean;
   isLoading: boolean;
   isError: boolean;
@@ -10,7 +10,7 @@ type InitialStateType = {
 };
 
 const initialState: InitialStateType = {
-  user: {} as IUser,
+  user: {} as IAccount,
   isLoading: false,
   isError: false,
   errorMessage: null,
@@ -34,7 +34,7 @@ export const authSlice = createSlice({
       builder.addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuth = true;
-        state.user = action.payload as IUser;
+        state.user = action.payload as IAccount;
       }),
       builder.addCase(login.rejected, (state, action) => {
         state.isLoading = false;
@@ -48,7 +48,7 @@ export const authSlice = createSlice({
       builder.addCase(reauth.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuth = true;
-        state.user = action.payload as IUser;
+        state.user = action.payload as IAccount;
       }),
       builder.addCase(reauth.rejected, (state, action) => {
         state.isLoading = false;
@@ -62,7 +62,7 @@ export const authSlice = createSlice({
       builder.addCase(logout.fulfilled, (state) => {
         state.isLoading = false;
         state.isAuth = false;
-        state.user = {} as IUser;
+        state.user = {} as IAccount;
       }),
       builder.addCase(logout.rejected, (state, action) => {
         state.isLoading = false;
@@ -78,7 +78,7 @@ export const authSlice = createSlice({
       builder.addCase(registerOrganization.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuth = true;
-        state.user = action.payload as IUser;
+        state.user = action.payload as IAccount;
       }),
       builder.addCase(registerOrganization.rejected, (state, action) => {
         state.isLoading = false;
