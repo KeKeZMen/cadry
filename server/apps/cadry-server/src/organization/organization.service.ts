@@ -1,15 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { tmpNameSync } from 'tmp';
-import { createReadStream } from 'fs';
-import { Workbook } from 'exceljs';
+import { Injectable } from "@nestjs/common";
+import { tmpNameSync } from "tmp";
+import { createReadStream } from "fs";
+import { Workbook } from "exceljs";
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
   CreateOrganizationUserDto,
-} from './dto';
-import { WorkProfessionService } from '@work-profession/work-profession.service';
-import { SpecialityService } from '@speciality/speciality.service';
-import { DatabaseService } from '@libs/database';
+} from "./dto";
+import { WorkProfessionService } from "@work-profession/work-profession.service";
+import { SpecialityService } from "@speciality/speciality.service";
+import { DatabaseService } from "@libs/database";
+import { UserService } from "@user/user.service";
 
 @Injectable()
 export class OrganizationService {
@@ -17,23 +18,33 @@ export class OrganizationService {
     private readonly databaseService: DatabaseService,
     private readonly specialityService: SpecialityService,
     private readonly workProfessionService: WorkProfessionService,
+    private readonly userService: UserService
   ) {}
 
-  create(createOrganizationDto: CreateOrganizationDto) {
-    return this.databaseService.organization.create({
+  async create(createOrganizationDto: CreateOrganizationDto) {
+    const user = await this.userService.create({
+      role: "Organization",
+      email: createOrganizationDto.email,
+      password: createOrganizationDto.password,
+      phoneNumber: createOrganizationDto.phoneNumber,
+    });
+
+    return await this.databaseService.organization.create({
       data: {
+        userId: user.id,
+        type: "EducationOrganization",
         ...createOrganizationDto,
       },
     });
   }
 
   createOrganizationViaUser(
-    createOrganizationUserDto: CreateOrganizationUserDto,
+    createOrganizationUserDto: CreateOrganizationUserDto
   ) {
     return this.databaseService.organization.create({
       data: {
         ...createOrganizationUserDto,
-        type: 'Organization',
+        type: "Organization",
       },
     });
   }
@@ -57,11 +68,11 @@ export class OrganizationService {
           some: {
             employees: {
               some: {
-                userId
-              }
-            }
-          }
-        }
+                userId,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -83,7 +94,7 @@ export class OrganizationService {
     const tmpPath = tmpNameSync();
     const workbook = new Workbook();
 
-    const dataWorksheet = workbook.addWorksheet('Данные');
+    const dataWorksheet = workbook.addWorksheet("Данные");
     professions.forEach((profession) => {
       dataWorksheet.addRow([
         profession.workProfession.name,
@@ -91,51 +102,51 @@ export class OrganizationService {
       ]);
     });
 
-    const templateWorksheet = workbook.addWorksheet('Шаблон');
-    templateWorksheet.addRow(['Направление/Специальность', speciality.name]);
-    templateWorksheet.addRow(['Год выпуска', new Date().getFullYear()]);
-    templateWorksheet.addRow(['Образовательное учреждение', organization.name]);
+    const templateWorksheet = workbook.addWorksheet("Шаблон");
+    templateWorksheet.addRow(["Направление/Специальность", speciality.name]);
+    templateWorksheet.addRow(["Год выпуска", new Date().getFullYear()]);
+    templateWorksheet.addRow(["Образовательное учреждение", organization.name]);
     templateWorksheet.addRow([
-      'Фамилия',
-      'Имя',
-      'Отчество',
-      'Дата рождения',
-      'Пол',
-      'Телефон',
-      'Email',
-      'Населенный пункт регистрации',
-      'Средний балл по аттестату(5-бальная шкала)',
-      'Социальная адаптированность(100-бальная шкала)',
-      'Доп. профессия 1',
-      'Категория',
-      'Доп. профессия 2',
-      'Категория',
-      'Доп. профессия 3',
-      'Категория',
-      'Основная профессия',
+      "Фамилия",
+      "Имя",
+      "Отчество",
+      "Дата рождения",
+      "Пол",
+      "Телефон",
+      "Email",
+      "Населенный пункт регистрации",
+      "Средний балл по аттестату(5-бальная шкала)",
+      "Социальная адаптированность(100-бальная шкала)",
+      "Доп. профессия 1",
+      "Категория",
+      "Доп. профессия 2",
+      "Категория",
+      "Доп. профессия 3",
+      "Категория",
+      "Основная профессия",
     ]);
 
     for (let j = 5; j <= 40; j++) {
       templateWorksheet.getCell(j, 9).dataValidation = {
-        type: 'decimal',
+        type: "decimal",
         formulae: [1, 5],
         showErrorMessage: true,
-        errorTitle: 'Неверно введен средний балл по аттестату',
-        error: 'Введите значение от 1 до 5',
+        errorTitle: "Неверно введен средний балл по аттестату",
+        error: "Введите значение от 1 до 5",
       };
 
       templateWorksheet.getCell(j, 10).dataValidation = {
-        type: 'whole',
+        type: "whole",
         formulae: [1, 100],
         showErrorMessage: true,
-        errorTitle: 'Неверно введен балл социальной адаптированности',
-        error: 'Введите значение от 1 до 100',
+        errorTitle: "Неверно введен балл социальной адаптированности",
+        error: "Введите значение от 1 до 100",
       };
 
       templateWorksheet.getCell(j, 5).dataValidation = {
-        type: 'list',
-        promptTitle: 'Выберите значение',
-        prompt: 'Выберите значение из списка',
+        type: "list",
+        promptTitle: "Выберите значение",
+        prompt: "Выберите значение из списка",
         allowBlank: false,
         formulae: ['"М, Ж"'],
         showErrorMessage: true,
@@ -144,9 +155,9 @@ export class OrganizationService {
       for (let i = 11; i <= 17; i++) {
         if (i % 2 !== 0) {
           templateWorksheet.getCell(j, i).dataValidation = {
-            type: 'list',
-            promptTitle: 'Выберите значение',
-            prompt: 'Выберите значение из списка',
+            type: "list",
+            promptTitle: "Выберите значение",
+            prompt: "Выберите значение из списка",
             allowBlank: true,
             formulae: [`=Данные!$A:$A`],
             showErrorMessage: true,
@@ -159,29 +170,29 @@ export class OrganizationService {
         if (i % 2 == 0) {
           const prevCell = templateWorksheet.getCell(j, i - 1).address;
           const minFormula =
-            '=VALUE(MID(VLOOKUP(' +
+            "=VALUE(MID(VLOOKUP(" +
             prevCell +
             ',Данные!A:B,2),1,SEARCH("-",VLOOKUP(' +
             prevCell +
-            ',Данные!A:B,2))-1))';
+            ",Данные!A:B,2))-1))";
 
           const maxFormula =
-            '=VALUE(MID(VLOOKUP(' +
+            "=VALUE(MID(VLOOKUP(" +
             prevCell +
             ',Данные!A:B,2),SEARCH("-",VLOOKUP(' +
             prevCell +
-            ',Данные!A:B,2))+1,LEN(VLOOKUP(' +
+            ",Данные!A:B,2))+1,LEN(VLOOKUP(" +
             prevCell +
             ',Данные!A:B,2))-SEARCH("-",VLOOKUP(' +
             prevCell +
-            ',Данные!A:B,2))))';
+            ",Данные!A:B,2))))";
 
           templateWorksheet.getCell(j, i).dataValidation = {
-            type: 'whole',
-            operator: 'between',
-            errorTitle: 'Неверно выбрана категория',
+            type: "whole",
+            operator: "between",
+            errorTitle: "Неверно выбрана категория",
             error:
-              'Выберите категорию из указанного для специальности диапазона',
+              "Выберите категорию из указанного для специальности диапазона",
             showErrorMessage: true,
             formulae: [minFormula, maxFormula],
           };
