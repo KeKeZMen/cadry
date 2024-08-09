@@ -32,3 +32,21 @@ export const createSchema = z
       });
     }
   });
+
+export const updateSchema = z.object({
+  name: z.string().min(1, { message: "Поле не может быть пустым" }),
+  phoneNumber: z
+    .string()
+    .min(11, { message: "Неверный формат номера телефона" }),
+  inn: z
+    .string()
+    .min(10, { message: "ИНН не может быть короче 10 символов" })
+    .max(12, { message: "Инн не может быть длиннее 12 символов" }),
+  email: z
+    .string()
+    .min(1, { message: "Поле не может быть пустым" })
+    .email({ message: "Неверный формат почты" }),
+  address: z.string().min(1, { message: "Поле не может быть пустым" }),
+  web: z.optional(z.string()),
+  description: z.optional(z.string()),
+});

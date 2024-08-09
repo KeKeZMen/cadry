@@ -10,7 +10,7 @@ export const CreateOrganizationButton = () => {
       <Button onClick={handleModal}>Создать</Button>
 
       <Dialog onOpenChange={handleModal} open={isOpenedModal}>
-        <DialogContent>     </DialogContent>
+        <DialogContent></DialogContent>
       </Dialog>
     </>
   );

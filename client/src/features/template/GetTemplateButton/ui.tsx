@@ -1,12 +1,20 @@
 import { axiosWithAuth } from "@shared";
-import { useCallback, useRef } from "react";
+import { FC, useCallback, useRef } from "react";
 
-export const GetTemplateButton = () => {
+type PropsType = {
+  organizationId: string;
+  specialityId: number;
+};
+
+export const GetTemplateButton: FC<PropsType> = ({
+  organizationId,
+  specialityId,
+}) => {
   const aRef = useRef<HTMLAnchorElement>(null);
 
   const handleGetTemplate = useCallback(async () => {
     const res = await axiosWithAuth.get(
-      "/organization/template/4eb3b4ea-9728-4d6b-ac75-dcc155c440a3/1",
+      `/organization/template/${organizationId}/${specialityId}`,
       { responseType: "blob" }
     );
 
